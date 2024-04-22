@@ -20,6 +20,7 @@ We aim to develop a program capable of reading and storing in memory an automato
 
 ## Part 4:
 - Add the following functions:
+  
      Union_Automata: to calculate the union of automata passed as parameters.
 
      Automaton_Star: to star an automaton passed as a parameter.
