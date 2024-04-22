@@ -6,6 +6,7 @@ Part 1:
 - Propose a data structure to store the information of an automaton.
 - Add a function to read and store an automaton from a .txt file; each line of this file is structured as follows:
      starting_state     destination_state   transition_label
+
      Initial and final states are provided at the end of the file.
 - Add a function to display the set of alphabet.
 
