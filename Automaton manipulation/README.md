@@ -12,6 +12,7 @@ We aim to develop a program capable of reading and storing in memory an automato
 
 ## Part 2:
 - Add a function to generate a .dot file associated with an automaton passed as a parameter and display on the screen the corresponding .png file.
+
      The initial state should be colored green, final states in blue, unreachable states in gray, and other states in black.
 
 ## Part 3:
