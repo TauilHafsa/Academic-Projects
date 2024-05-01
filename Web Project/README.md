@@ -1,8 +1,8 @@
-#Web Project#
+**Web Project**
 
-##Objective: Create an online learning platform##
+****Objective: Create an online learning platform****
 
-Registration:
+****Registration:****
   - Teacher
   - Student
 
