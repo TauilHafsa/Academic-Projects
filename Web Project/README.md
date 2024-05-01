@@ -1,16 +1,16 @@
 **Web Project**
 
-****Objective: Create an online learning platform****
+**Objective:** Create an online learning platform
 
-****Registration:****
+**Registration:**
   - Teacher
   - Student
 
-Authentication:
+**Authentication:**
   - Teacher
   - Student
 
-Teacher:
+**Teacher:**
   - Adding courses
       - Descriptive information
       - Resources (.pdf files)
@@ -19,21 +19,21 @@ Teacher:
   - Editing/deleting courses
   - Viewing the list of students enrolled in their courses
 
-Student:
+**Student:**
   - Sending questions to teachers
   - Accessing course resources
   - Searching for courses
   - Downloading resources
   - Enrolling in different courses
 
-Profile:
+**Profile:**
   - Editing personal information
 
-Account Deletion:
+**Account Deletion:**
   - Sending a request to the administrator
   - Deletion by the administrator
 
-Dashboards:
+**Dashboards:**
 - Administrator
     - List of registered users
     - Monitoring available courses
