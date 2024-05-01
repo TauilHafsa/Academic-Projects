@@ -8,4 +8,5 @@ Our approach involves training a Convolutional Neural Network (CNN) using PyTorc
 ## Real-Time Implementation
 We integrate the system with OpenCV to access the camera in real-time, capturing the driver's eyes as input for the model. The model's output is binary, where 0 signifies open eyes, ensuring no intervention is needed. Conversely, a value of 1 indicates closed eyes, if they still close for a period of time, an alarm is activated, minimizing the risk of drowsiness while driving.
 
-![General modelisation-1](https://github.com/TauilHafsa/Drowsiness-detection-while-driving/assets/150071317/b28da918-eb28-444e-b368-6df0ebfd5661)
+
+<img width="460" alt="Capture d’écran 2023-05-30 200256" src="https://github.com/TauilHafsa/Academic-Projects/assets/150071317/aee9a6a2-ffd6-45a0-8732-f8f8c2d48f5f">
