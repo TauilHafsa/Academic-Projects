@@ -1,4 +1,4 @@
-**Socket and Data Structures**
+**Advanced C Language: Socket and Data Structures**
 
 
 **Objective:**
@@ -33,3 +33,6 @@ This project aims to develop two applications in C using sockets and data struct
 
    - The server must display all received requests.
    - It performs the requested processing by the client, including adding, modifying, deleting, and searching for contacts.
+
+
+![Diagramme sans nom drawio](https://github.com/TauilHafsa/Academic-Projects/assets/150071317/71f48633-ff23-4b6e-a6fd-0b7a2cdb1fd9)
