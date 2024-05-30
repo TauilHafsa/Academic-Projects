@@ -1,0 +1,10 @@
+# depslib dependency file v1.0
+1712297594 source:c:\users\pc\3d objects\projet c avs\serveure\main.c
+	<stdio.h>
+	<stdlib.h>
+	<string.h>
+	<winsock2.h>
+	<ws2tcpip.h>
+	<netinet/in.h>
+	<sys/socket.h>
+
