@@ -1,0 +1,163 @@
+{% extends 'base.html' %}
+
+{% block title %}Nouvelle réservation{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="fas fa-calendar-plus me-2"></i>Nouvelle réservation</h1>
+            <a href="{{ url_for('reservation.list') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Retour
+            </a>
+        </div>
+        
+        <div class="card shadow border-0">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Informations de la réservation</h4>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('reservation.create') }}">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5 class="mb-3">Client</h5>
+                            <div class="mb-3">
+                                <label for="client_id" class="form-label">Sélectionner un client</label>
+                                <select class="form-select" id="client_id" name="client_id" required>
+                                    <option value="" disabled selected>Choisir un client</option>
+                                    {% for client in clients %}
+                                        <option value="{{ client._id }}">{{ client.first_name }} {{ client.last_name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="text-end">
+                                <a href="{{ url_for('client.create') }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-plus-circle me-1"></i>Nouveau client
+                                </a>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="mb-3">Voiture</h5>
+                            <div class="mb-3">
+                                <label for="car_id" class="form-label">Sélectionner une voiture</label>
+                                <select class="form-select" id="car_id" name="car_id" required {% if selected_car %}disabled{% endif %}>
+                                    <option value="" disabled {% if not selected_car %}selected{% endif %}>Choisir une voiture</option>
+                                    {% for car in available_cars %}
+                                        <option value="{{ car._id }}" {% if selected_car and car._id == selected_car._id %}selected{% endif %}>
+                                            {{ car.brand }} {{ car.model }} ({{ car.registration }}) - {{ car.daily_rate }}€/jour
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                                {% if selected_car %}
+                                    <input type="hidden" name="car_id" value="{{ selected_car._id }}">
+                                {% endif %}
+                            </div>
+                            <div class="text-end">
+                                <a href="{{ url_for('car.available') }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-search me-1"></i>Voir voitures disponibles
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="start_date" class="form-label">Date de début</label>
+                                <input type="date" class="form-control" id="start_date" name="start_date" required>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="mb-3">
+                                <label for="end_date" class="form-label">Date de fin</label>
+                                <input type="date" class="form-control" id="end_date" name="end_date" required>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="card bg-light mb-4">
+                        <div class="card-body">
+                            <h5 class="mb-3">Calcul du prix</h5>
+                            <div class="row">
+                                <div class="col-md-4 mb-3">
+                                    <label for="daily_rate" class="form-label">Prix journalier</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="daily_rate" name="daily_rate" step="0.01" min="0" value="{{ selected_car.daily_rate if selected_car else '' }}" readonly>
+                                        <span class="input-group-text">€</span>
+                                    </div>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="days" class="form-label">Nombre de jours</label>
+                                    <input type="number" class="form-control" id="days" readonly>
+                                </div>
+                                <div class="col-md-4 mb-3">
+                                    <label for="total_price" class="form-label">Prix total</label>
+                                    <div class="input-group">
+                                        <input type="number" class="form-control" id="total_price" name="total_price" step="0.01" min="0" readonly>
+                                        <span class="input-group-text">€</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="notes" class="form-label">Notes</label>
+                        <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-calendar-check me-2"></i>Créer la réservation
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const startDateInput = document.getElementById('start_date');
+        const endDateInput = document.getElementById('end_date');
+        const dailyRateInput = document.getElementById('daily_rate');
+        const daysInput = document.getElementById('days');
+        const totalPriceInput = document.getElementById('total_price');
+        
+        function calculatePrice() {
+            const startDate = new Date(startDateInput.value);
+            const endDate = new Date(endDateInput.value);
+            const dailyRate = parseFloat(dailyRateInput.value) || 0;
+            
+            if (startDate && endDate && dailyRate && startDate <= endDate) {
+                const diffTime = Math.abs(endDate - startDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                const total = dailyRate * diffDays;
+                
+                daysInput.value = diffDays;
+                totalPriceInput.value = total.toFixed(2);
+            } else {
+                daysInput.value = '';
+                totalPriceInput.value = '';
+            }
+        }
+        
+        startDateInput.addEventListener('change', calculatePrice);
+        endDateInput.addEventListener('change', calculatePrice);
+        dailyRateInput.addEventListener('change', calculatePrice);
+        
+        // Set default dates
+        const today = new Date();
+        const tomorrow = new Date();
+        tomorrow.setDate(today.getDate() + 1);
+        
+        startDateInput.valueAsDate = today;
+        endDateInput.valueAsDate = tomorrow;
+        
+        calculatePrice();
+    });
+</script>
+{% endblock %}
+{% endblock %}

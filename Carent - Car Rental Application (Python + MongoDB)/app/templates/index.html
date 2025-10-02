@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}Accueil{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center my-5">
+    <div class="col-md-8 text-center">
+        <h1 class="display-4 mb-4">
+            <i class="fas fa-car-side text-primary me-3"></i>
+            Bienvenue sur Carent
+        </h1>
+        <p class="lead mb-4">
+            Application de gestion de location de voitures
+        </p>
+
+        <div class="card shadow border-0 mb-5">
+            <div class="card-body p-5">
+                {% if current_user.is_authenticated %}
+                    {% if current_user.role == 'admin' %}
+                        <h2 class="h4 mb-4">Administration</h2>
+                        <div class="row justify-content-center">
+                            <div class="col-md-6">
+                                <a href="{{ url_for('admin.dashboard') }}" class="btn btn-primary btn-lg w-100 mb-3">
+                                    <i class="fas fa-tachometer-alt me-2"></i>Tableau de bord
+                                </a>
+                            </div>
+                            <div class="col-md-6">
+                                <a href="{{ url_for('admin.list_managers') }}" class="btn btn-outline-primary btn-lg w-100 mb-3">
+                                    <i class="fas fa-users-cog me-2"></i>Gérer les managers
+                                </a>
+                            </div>
+                        </div>
+                    {% elif current_user.role == 'manager' %}
+                        <h2 class="h4 mb-4">Gestion</h2>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <a href="{{ url_for('car.list') }}" class="btn btn-primary btn-lg w-100">
+                                    <i class="fas fa-car me-2"></i>Voitures
+                                </a>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <a href="{{ url_for('client.list') }}" class="btn btn-primary btn-lg w-100">
+                                    <i class="fas fa-user-friends me-2"></i>Clients
+                                </a>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <a href="{{ url_for('reservation.list') }}" class="btn btn-primary btn-lg w-100">
+                                    <i class="fas fa-calendar-alt me-2"></i>Réservations
+                                </a>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-md-6 mb-3">
+                                <a href="{{ url_for('car.available') }}" class="btn btn-outline-primary btn-lg w-100">
+                                    <i class="fas fa-check-circle me-2"></i>Voitures disponibles
+                                </a>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <a href="{{ url_for('reservation.create') }}" class="btn btn-outline-primary btn-lg w-100">
+                                    <i class="fas fa-plus-circle me-2"></i>Nouvelle réservation
+                                </a>
+                            </div>
+                        </div>
+                    {% endif %}
+                {% else %}
+                    <h2 class="h4 mb-4">Connexion</h2>
+                    <div class="row justify-content-center">
+                        <div class="col-md-6">
+                            <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg w-100">
+                                <i class="fas fa-sign-in-alt me-2"></i>Se connecter
+                            </a>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

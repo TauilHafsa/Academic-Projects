@@ -1,0 +1,148 @@
+{% extends 'base.html' %}
+
+{% block title %}Détails de la réservation{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="fas fa-clipboard-list me-2"></i>Détails de la réservation</h1>
+            <a href="{{ url_for('reservation.list') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Retour
+            </a>
+        </div>
+        
+        <div class="card shadow border-0 mb-4">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Réservation #{{ reservation._id }}</h4>
+                    <span class="badge bg-white text-primary">
+                        {% if reservation.status == 'pending' %}
+                            En attente
+                        {% elif reservation.status == 'approved' %}
+                            Approuvée
+                        {% elif reservation.status == 'rejected' %}
+                            Rejetée
+                        {% elif reservation.status == 'cancelled' %}
+                            Annulée
+                        {% elif reservation.status == 'completed' %}
+                            Terminée
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5 class="mb-3">Client</h5>
+                        <div class="card h-90">
+                            <div class="card-body">
+                                <h6 class="mb-2">{{ client.first_name }} {{ client.last_name }}</h6>
+                                <p class="mb-1"><i class="fas fa-envelope me-2 text-muted"></i>{{ client.email }}</p>
+                                <p class="mb-1"><i class="fas fa-phone me-2 text-muted"></i>{{ client.phone }}</p>
+                                <p class="mb-1"><i class="fas fa-id-card me-2 text-muted"></i>Permis: {{ client.driver_license }}</p>
+                                <p class="mb-0"><i class="fas fa-map-marker-alt me-2 text-muted"></i>{{ client.address }}</p>
+                            </div>
+                            <div class="card-footer bg-white">
+                                <a href="{{ url_for('client.details', client_id=client._id) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-user me-1"></i>Voir le profil client
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="mb-3">Voiture</h5>
+                        <div class="card h-90">
+                            <div class="card-body">
+                                <h6 class="mb-2">{{ car.brand }} {{ car.model }}</h6>
+                                <p class="mb-1"><i class="fas fa-calendar-alt me-2 text-muted"></i>{{ car.year }}</p>
+                                <p class="mb-1"><i class="fas fa-tag me-2 text-muted"></i>{{ car.registration }}</p>
+                                <p class="mb-1"><i class="fas fa-gas-pump me-2 text-muted"></i>{{ car.fuel_type | title }}</p>
+                                <p class="mb-0"><i class="fas fa-users me-2 text-muted"></i>{{ car.seats }} places</p>
+                            </div>
+                            <div class="card-footer bg-white">
+                                <a href="{{ url_for('car.details', car_id=car._id) }}" class="btn btn-sm btn-outline-primary">
+                                    <i class="fas fa-car me-1"></i>Voir détails de la voiture
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row mb-4">
+                    <div class="col-md-6">
+                        <h5 class="mb-3">Informations de location</h5>
+                        <table class="table">
+                            <tr>
+                                <th>Date de début:</th>
+                                <td>{{ reservation.start_date.strftime('%d/%m/%Y') }}</td>
+                            </tr>
+                            <tr>
+                                <th>Date de fin:</th>
+                                <td>{{ reservation.end_date.strftime('%d/%m/%Y') }}</td>
+                            </tr>
+                            <tr>
+                                <th>Durée:</th>
+                                <td>{{ (reservation.end_date - reservation.start_date).days + 1 }} jours</td>
+                            </tr>
+                            <tr>
+                                <th>Prix journalier:</th>
+                                <td>{{ car.daily_rate }} €</td>
+                            </tr>
+                            <tr>
+                                <th>Prix total:</th>
+                                <td class="fw-bold">{{ reservation.total_price }} €</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="mb-3">Notes et informations</h5>
+                        <div class="card h-90">
+                            <div class="card-body">
+                                <p class="mb-3">
+                                    <small class="text-muted">Créée le {{ reservation.created_at.strftime('%d/%m/%Y à %H:%M') }}</small>
+                                </p>
+                                <div class="mb-0">
+                                    {% if reservation.notes %}
+                                        {{ reservation.notes }}
+                                    {% else %}
+                                        <em class="text-muted">Aucune note pour cette réservation</em>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if reservation.status == 'pending' %}
+                    <div class="d-flex justify-content-center">
+                        <form action="{{ url_for('reservation.approve', reservation_id=reservation._id) }}" method="post" class="me-2">
+                            <button type="submit" class="btn btn-success">
+                                <i class="fas fa-check me-2"></i>Approuver la réservation
+                            </button>
+                        </form>
+                        <form action="{{ url_for('reservation.reject', reservation_id=reservation._id) }}" method="post">
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-times me-2"></i>Rejeter la réservation
+                            </button>
+                        </form>
+                    </div>
+                {% elif reservation.status == 'approved' %}
+                    <div class="d-flex justify-content-center">
+                        <form action="{{ url_for('reservation.complete', reservation_id=reservation._id) }}" method="post" class="me-2">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-flag-checkered me-2"></i>Marquer comme terminée
+                            </button>
+                        </form>
+                        <form action="{{ url_for('reservation.cancel', reservation_id=reservation._id) }}" method="post">
+                            <button type="submit" class="btn btn-secondary">
+                                <i class="fas fa-ban me-2"></i>Annuler la réservation
+                            </button>
+                        </form>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block title %}Détails du client{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="fas fa-user-circle me-2"></i>Détails du client</h1>
+            <div>
+                <a href="{{ url_for('client.edit', client_id=client._id) }}" class="btn btn-primary me-2">
+                    <i class="fas fa-edit me-2"></i>Modifier
+                </a>
+                <a href="{{ url_for('client.list') }}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left me-2"></i>Retour
+                </a>
+            </div>
+        </div>
+        
+        <!-- Détails du client -->
+        <div class="card shadow border-0 mb-4">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Informations personnelles</h4>
+            </div>
+            <div class="card-body p-4">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <h5 class="text-muted">Nom complet</h5>
+                            <p class="h4">{{ client.first_name }} {{ client.last_name }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <h5 class="text-muted">Email</h5>
+                            <p>{{ client.email }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <h5 class="text-muted">Téléphone</h5>
+                            <p>{{ client.phone }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <h5 class="text-muted">Adresse</h5>
+                            <p>{{ client.address }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <h5 class="text-muted">Numéro de permis</h5>
+                            <p>{{ client.license_number }}</p>
+                        </div>
+                        <div class="mb-3">
+                            <h5 class="text-muted">Date de naissance</h5>
+                            <p>{{ client.birth_date.strftime('%d/%m/%Y') if client.birth_date else 'Non renseigné' }}</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <h5 class="text-muted">Date d'inscription</h5>
+                            <p>{{ client.created_at.strftime('%d/%m/%Y %H:%M') }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <h5 class="text-muted">Dernière mise à jour</h5>
+                            <p>{{ client.updated_at.strftime('%d/%m/%Y %H:%M') }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Historique des réservations -->
+        <div class="card shadow border-0">
+            <div class="card-header bg-primary text-white">
+                <h4 class="mb-0">Historique des réservations</h4>
+            </div>
+            <div class="card-body p-0">
+                {% if reservations %}
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Voiture</th>
+                                    <th>Période</th>
+                                    <th>Statut</th>
+                                    <th>Prix</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for item in reservations %}
+                                    <tr>
+                                        <td>
+                                            <div class="d-flex align-items-center">
+                                                <div class="ms-2">
+                                                    <h6 class="mb-0">{{ item.car.brand }} {{ item.car.model }}</h6>
+                                                    <small class="text-muted">{{ item.car.license_plate }}</small>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <div>
+                                                <div>Du {{ item.reservation.start_date.strftime('%d/%m/%Y') }}</div>
+                                                <div>Au {{ item.reservation.end_date.strftime('%d/%m/%Y') }}</div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            {% if item.reservation.status == 'pending' %}
+                                                <span class="badge bg-warning">En attente</span>
+                                            {% elif item.reservation.status == 'confirmed' %}
+                                                <span class="badge bg-success">Confirmée</span>
+                                            {% elif item.reservation.status == 'completed' %}
+                                                <span class="badge bg-info">Terminée</span>
+                                            {% elif item.reservation.status == 'cancelled' %}
+                                                <span class="badge bg-secondary">Annulée</span>
+                                            {% elif item.reservation.status == 'rejected' %}
+                                                <span class="badge bg-danger">Refusée</span>
+                                            {% endif %}
+                                        </td>
+                                        <td>{{ item.reservation.total_price }}€</td>
+                                        <td>
+                                            <a href="{{ url_for('reservation.details', reservation_id=item.reservation._id) }}" class="btn btn-sm btn-outline-primary">
+                                                <i class="fas fa-eye"></i>
+                                            </a>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% else %}
+                    <div class="p-4 text-center">
+                        <p class="text-muted mb-0">Aucune réservation trouvée pour ce client</p>
+                        <a href="{{ url_for('reservation.create', client_id=client._id) }}" class="btn btn-outline-primary mt-3">
+                            <i class="fas fa-plus-circle me-2"></i>Créer une réservation
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

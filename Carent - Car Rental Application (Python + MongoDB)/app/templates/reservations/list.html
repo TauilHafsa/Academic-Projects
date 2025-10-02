@@ -1,0 +1,162 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestion des Réservations{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-calendar-alt me-2"></i>Gestion des Réservations</h1>
+    <a href="{{ url_for('reservation.create') }}" class="btn btn-primary">
+        <i class="fas fa-plus-circle me-2"></i>Nouvelle réservation
+    </a>
+</div>
+
+<!-- Ajout du formulaire de recherche -->
+<div class="card shadow border-0 mb-4">
+    <div class="card-header bg-white py-3">
+        <h5 class="mb-0"><i class="fas fa-search me-2"></i>Filtrer les réservations</h5>
+    </div>
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('reservation.list') }}" id="filterForm">
+            <div class="row g-3">
+                <div class="col-md-4">
+                    <label for="client_search" class="form-label">Client</label>
+                    <input type="text" class="form-control" id="client_search" name="client_search" 
+                           placeholder="Nom ou prénom" value="{{ request.args.get('client_search', '') }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="car_search" class="form-label">Voiture</label>
+                    <input type="text" class="form-control" id="car_search" name="car_search" 
+                           placeholder="Marque, modèle ou immat." value="{{ request.args.get('car_search', '') }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="status" class="form-label">Statut</label>
+                    <select class="form-select" id="status" name="status">
+                        <option value="" {% if not request.args.get('status') %}selected{% endif %}>Tous les statuts</option>
+                        <option value="pending" {% if request.args.get('status') == 'pending' %}selected{% endif %}>En attente</option>
+                        <option value="approved" {% if request.args.get('status') == 'approved' %}selected{% endif %}>Approuvée</option>
+                        <option value="rejected" {% if request.args.get('status') == 'rejected' %}selected{% endif %}>Rejetée</option>
+                        <option value="cancelled" {% if request.args.get('status') == 'cancelled' %}selected{% endif %}>Annulée</option>
+                        <option value="completed" {% if request.args.get('status') == 'completed' %}selected{% endif %}>Terminée</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row g-3 mt-2">
+                <div class="col-md-4">
+                    <label for="date_from" class="form-label">Date de début (de)</label>
+                    <input type="date" class="form-control" id="date_from" name="date_from" 
+                           value="{{ request.args.get('date_from', '') }}">
+                </div>
+                <div class="col-md-4">
+                    <label for="date_to" class="form-label">Date de début (à)</label>
+                    <input type="date" class="form-control" id="date_to" name="date_to" 
+                           value="{{ request.args.get('date_to', '') }}">
+                </div>
+                <div class="col-md-4 d-flex align-items-end">
+                    <div class="d-grid gap-2 w-100">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-filter me-2"></i>Filtrer
+                        </button>
+                        <a href="{{ url_for('reservation.list') }}" class="btn btn-outline-secondary">
+                            <i class="fas fa-times me-2"></i>Réinitialiser
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div class="card shadow border-0 mb-4">
+    <div class="card-header bg-white py-3">
+        <ul class="nav nav-pills" id="reservationTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="all-tab" data-bs-toggle="pill" data-bs-target="#all" type="button" role="tab">
+                    Toutes
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="pending-tab" data-bs-toggle="pill" data-bs-target="#pending" type="button" role="tab">
+                    En attente
+                    {% if pending_count > 0 %}
+                        <span class="badge bg-warning text-dark ms-1">{{ pending_count }}</span>
+                    {% endif %}
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="approved-tab" data-bs-toggle="pill" data-bs-target="#approved" type="button" role="tab">
+                    Approuvées
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="completed-tab" data-bs-toggle="pill" data-bs-target="#completed" type="button" role="tab">
+                    Terminées
+                </button>
+            </li>
+        </ul>
+    </div>
+    <div class="card-body p-0">
+        <div class="tab-content">
+            <!-- Toutes les réservations -->
+            <div class="tab-pane fade show active" id="all" role="tabpanel">
+                {% include 'reservations/partials/reservation_table.html' with context %}
+            </div>
+            
+            <!-- Réservations en attente -->
+            <div class="tab-pane fade" id="pending" role="tabpanel">
+                {% set filtered_reservations = reservations | selectattr('reservation.status', 'equalto', 'pending') | list %}
+                {% with reservations = filtered_reservations %}
+                    {% include 'reservations/partials/reservation_table.html' with context %}
+                {% endwith %}
+            </div>
+            
+            <!-- Réservations approuvées -->
+            <div class="tab-pane fade" id="approved" role="tabpanel">
+                {% set filtered_reservations = reservations | selectattr('reservation.status', 'equalto', 'approved') | list %}
+                {% with reservations = filtered_reservations %}
+                    {% include 'reservations/partials/reservation_table.html' with context %}
+                {% endwith %}
+            </div>
+            
+            <!-- Réservations terminées -->
+            <div class="tab-pane fade" id="completed" role="tabpanel">
+                {% set filtered_reservations = reservations | selectattr('reservation.status', 'equalto', 'completed') | list %}
+                {% with reservations = filtered_reservations %}
+                    {% include 'reservations/partials/reservation_table.html' with context %}
+                {% endwith %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Si des filtres sont appliqués, ajouter une indication visuelle
+        const urlParams = new URLSearchParams(window.location.search);
+        const hasFilters = urlParams.toString() !== '';
+        
+        if (hasFilters) {
+            const resetBtn = document.querySelector('a.btn-outline-secondary');
+            resetBtn.classList.add('btn-warning');
+            resetBtn.classList.remove('btn-outline-secondary');
+            
+            // Ajouter un badge de filtre actif près du titre
+            const pageTitle = document.querySelector('h1');
+            const badge = document.createElement('span');
+            badge.className = 'badge bg-warning text-dark ms-2';
+            badge.textContent = 'Filtres actifs';
+            pageTitle.appendChild(badge);
+        }
+        
+        // Ajouter une fonctionnalité pour préserver les filtres lors du changement d'onglet
+        const tabButtons = document.querySelectorAll('[data-bs-toggle="pill"]');
+        tabButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Ne pas soumettre le formulaire, juste changer d'onglet
+                // Les filtres restent appliqués car ils sont dans l'URL
+            });
+        });
+    });
+</script>
+{% endblock %}

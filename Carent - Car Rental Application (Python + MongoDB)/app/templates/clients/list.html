@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestion des Clients{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="fas fa-user-friends me-2"></i>Gestion des Clients</h1>
+    <a href="{{ url_for('client.create') }}" class="btn btn-primary">
+        <i class="fas fa-plus-circle me-2"></i>Ajouter un client
+    </a>
+</div>
+
+<!-- Zone de filtrage -->
+<div class="card shadow border-0 mb-4">
+    <div class="card-body">
+        <form action="{{ url_for('client.list') }}" method="GET" class="row g-3">
+            <div class="col-md-8">
+                <div class="input-group">
+                    <input type="text" class="form-control" name="search" placeholder="Rechercher un client..." value="{{ search_query }}">
+                    <button class="btn btn-primary" type="submit">
+                        <i class="fas fa-search me-2"></i>Rechercher
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <select class="form-select" name="filter_by">
+                    <option value="all" {% if filter_by == 'all' %}selected{% endif %}>Tous les champs</option>
+                    <option value="name" {% if filter_by == 'name' %}selected{% endif %}>Nom/Prénom</option>
+                    <option value="email" {% if filter_by == 'email' %}selected{% endif %}>Email</option>
+                    <option value="phone" {% if filter_by == 'phone' %}selected{% endif %}>Téléphone</option>
+                    <option value="license_number" {% if filter_by == 'license_number' %}selected{% endif %}>Numéro de permis</option>
+                    <option value="address" {% if filter_by == 'address' %}selected{% endif %}>Adresse</option>
+                </select>
+            </div>
+            {% if search_query %}
+            <div class="col-12">
+                <a href="{{ url_for('client.list') }}" class="btn btn-sm btn-outline-secondary">
+                    <i class="fas fa-times me-2"></i>Effacer les filtres
+                </a>
+            </div>
+            {% endif %}
+        </form>
+    </div>
+</div>
+
+<div class="card shadow border-0">
+    <div class="card-body p-0">
+        {% if clients %}
+            <div class="table-responsive">
+                <table class="table table-hover mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Nom</th>
+                            <th>Email</th>
+                            <th>Téléphone</th>
+                            <th>Adresse</th>
+                            <th>Réservations</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for client in clients %}
+                            <tr>
+                                <td>
+                                    <strong>{{ client.first_name }} {{ client.last_name }}</strong>
+                                </td>
+                                <td>{{ client.email }}</td>
+                                <td>{{ client.phone }}</td>
+                                <td>{{ client.address | truncate(30) }}</td>
+                                <td>
+                                    {% if client.reservations_count > 0 %}
+                                        <span class="badge bg-primary">{{ client.reservations_count }}</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">0</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a href="{{ url_for('client.details', client_id=client._id) }}" class="btn btn-outline-primary">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{{ url_for('client.edit', client_id=client._id) }}" class="btn btn-outline-primary">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal{{ client._id }}">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                    
+                                    <!-- Delete Modal -->
+                                    <div class="modal fade" id="deleteModal{{ client._id }}" tabindex="-1" aria-hidden="true">
+                                        <div class="modal-dialog">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title">Confirmation de suppression</h5>
+                                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    Êtes-vous sûr de vouloir supprimer le client <strong>{{ client.first_name }} {{ client.last_name }}</strong> ?
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                                                    <form action="{{ url_for('client.delete', client_id=client._id) }}" method="post">
+                                                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- Affiche le nombre de résultats -->
+            <div class="p-3 border-top">
+                <p class="text-muted mb-0">{{ clients|length }} client(s) trouvé(s)</p>
+            </div>
+        {% else %}
+            <div class="p-4 text-center">
+                {% if search_query %}
+                    <p class="text-muted mb-0">Aucun client trouvé avec ces critères de recherche</p>
+                    <a href="{{ url_for('client.list') }}" class="btn btn-outline-secondary mt-3">
+                        <i class="fas fa-times me-2"></i>Effacer les filtres
+                    </a>
+                {% else %}
+                    <p class="text-muted mb-0">Aucun client trouvé</p>
+                    <a href="{{ url_for('client.create') }}" class="btn btn-outline-primary mt-3">
+                        <i class="fas fa-plus-circle me-2"></i>Ajouter un client
+                    </a>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

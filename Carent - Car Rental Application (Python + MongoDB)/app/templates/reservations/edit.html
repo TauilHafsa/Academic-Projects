@@ -1,0 +1,182 @@
+{% extends 'base.html' %}
+{% from 'reservations/partials/status_update_buttons.html' import render_status_buttons %}
+
+{% block title %}Modifier la réservation{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-10">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h1><i class="fas fa-edit me-2"></i>Modifier la réservation</h1>
+            <a href="{{ url_for('reservation.details', reservation_id=reservation._id) }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left me-2"></i>Retour aux détails
+            </a>
+        </div>
+        
+        <div class="card shadow border-0 mb-4">
+            <div class="card-header bg-primary text-white">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">Réservation #{{ reservation._id }}</h4>
+                    <span class="badge bg-white text-primary">
+                        {% if reservation.status == 'pending' %}
+                            En attente
+                        {% elif reservation.status == 'approved' %}
+                            Approuvée
+                        {% elif reservation.status == 'rejected' %}
+                            Rejetée
+                        {% elif reservation.status == 'cancelled' %}
+                            Annulée
+                        {% elif reservation.status == 'completed' %}
+                            Terminée
+                        {% endif %}
+                    </span>
+                </div>
+            </div>
+            <div class="card-body p-4">
+                <form method="POST" action="{{ url_for('reservation.edit', reservation_id=reservation._id) }}">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5 class="mb-3">Client</h5>
+                            <div class="card h-90">
+                                <div class="card-body">
+                                    <h6 class="mb-2">{{ client.first_name }} {{ client.last_name }}</h6>
+                                    <p class="mb-1"><i class="fas fa-envelope me-2 text-muted"></i>{{ client.email }}</p>
+                                    <p class="mb-1"><i class="fas fa-phone me-2 text-muted"></i>{{ client.phone }}</p>
+                                    <p class="mb-1"><i class="fas fa-id-card me-2 text-muted"></i>Permis: {{ client.driver_license }}</p>
+                                    <p class="mb-0"><i class="fas fa-map-marker-alt me-2 text-muted"></i>{{ client.address }}</p>
+                                </div>
+                                <div class="card-footer bg-white">
+                                    <a href="{{ url_for('client.details', client_id=client._id) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-user me-1"></i>Voir le profil client
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="mb-3">Voiture</h5>
+                            <div class="card h-90">
+                                <div class="card-body">
+                                    <h6 class="mb-2">{{ car.brand }} {{ car.model }}</h6>
+                                    <p class="mb-1"><i class="fas fa-calendar-alt me-2 text-muted"></i>{{ car.year }}</p>
+                                    <p class="mb-1"><i class="fas fa-tag me-2 text-muted"></i>{{ car.registration }}</p>
+                                    <p class="mb-1"><i class="fas fa-gas-pump me-2 text-muted"></i>{{ car.fuel_type | title }}</p>
+                                    <p class="mb-0"><i class="fas fa-users me-2 text-muted"></i>{{ car.seats }} places</p>
+                                </div>
+                                <div class="card-footer bg-white">
+                                    <a href="{{ url_for('car.details', car_id=car._id) }}" class="btn btn-sm btn-outline-primary">
+                                        <i class="fas fa-car me-1"></i>Voir détails de la voiture
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5 class="mb-3">Informations de location</h5>
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <label for="start_date" class="form-label">Date de début:</label>
+                                        <input type="date" class="form-control" id="start_date" name="start_date" 
+                                               value="{{ reservation.start_date.strftime('%Y-%m-%d') }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="end_date" class="form-label">Date de fin:</label>
+                                        <input type="date" class="form-control" id="end_date" name="end_date" 
+                                               value="{{ reservation.end_date.strftime('%Y-%m-%d') }}" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Durée actuelle:</label>
+                                        <p id="duration_display">{{ (reservation.end_date - reservation.start_date).days + 1 }} jours</p>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">Prix journalier:</label>
+                                        <p>{{ car.daily_rate }} €</p>
+                                    </div>
+                                    <div>
+                                        <label class="form-label">Prix total estimé:</label>
+                                        <p class="fw-bold" id="total_price_display">{{ reservation.total_price }} €</p>
+                                        <small class="text-muted">Le prix total sera recalculé en fonction des nouvelles dates.</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="mb-3">Notes et informations</h5>
+                            <div class="card h-90">
+                                <div class="card-body">
+                                    <p class="mb-3">
+                                        <small class="text-muted">Créée le {{ reservation.created_at.strftime('%d/%m/%Y à %H:%M') }}</small>
+                                        {% if reservation.updated_at and reservation.updated_at != reservation.created_at %}
+                                            <br>
+                                            <small class="text-muted">Dernière mise à jour le {{ reservation.updated_at.strftime('%d/%m/%Y à %H:%M') }}</small>
+                                        {% endif %}
+                                    </p>
+                                    <div class="mb-3">
+                                        <label for="notes" class="form-label">Notes:</label>
+                                        <textarea class="form-control" id="notes" name="notes" rows="5">{{ reservation.notes }}</textarea>
+                                    </div>
+                                    
+                                    {% if manager %}
+                                    <div class="mt-3">
+                                        <h6>Gestion</h6>
+                                        <p class="mb-0">
+                                            <small class="text-muted">Géré par: {{ manager.first_name }} {{ manager.last_name }}</small>
+                                        </p>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <button type="button" class="btn btn-secondary" onclick="window.history.back()">Annuler</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Enregistrer les modifications
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Script pour vérifier que la date de fin est après la date de début
+    // et pour calculer la durée et le prix total estimé
+    document.addEventListener('DOMContentLoaded', function() {
+        const startDateInput = document.getElementById('start_date');
+        const endDateInput = document.getElementById('end_date');
+        const durationDisplay = document.getElementById('duration_display');
+        const dailyRate = {{ car.daily_rate }};
+        
+        function validateDates() {
+            const startDate = new Date(startDateInput.value);
+            const endDate = new Date(endDateInput.value);
+            
+            if (endDate < startDate) {
+                endDateInput.setCustomValidity('La date de fin doit être postérieure à la date de début');
+                return;
+            } else {
+                endDateInput.setCustomValidity('');
+            }
+            
+            // Calculer la durée en jours
+            const diffTime = Math.abs(endDate - startDate);
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+            
+            // Mettre à jour l'affichage de la durée
+            durationDisplay.textContent = diffDays + ' jours';
+            
+            // Calculer et mettre à jour le prix total estimé
+            const totalPrice = diffDays * dailyRate;
+            document.getElementById('total_price_display').textContent = totalPrice + ' €';
+        }
+        
+        startDateInput.addEventListener('change', validateDates);
+        endDateInput.addEventListener('change', validateDates);
+    });
+</script>
+{% endblock %}
