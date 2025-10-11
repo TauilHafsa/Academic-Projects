@@ -1,5 +1,5 @@
 
-# 🇲🇦 Annual Income Prediction App — Morocco
+# Annual Income Prediction App — Morocco
 
 A complete **Machine Learning web application** that predicts the **annual income of Moroccan citizens** based on socio-demographic and professional characteristics.
 
@@ -194,5 +194,6 @@ This project is released under the **MIT License**.
 You are free to use, modify, and distribute it with proper attribution.
 
 ---
+
 
 
