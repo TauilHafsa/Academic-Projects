@@ -1,10 +1,4 @@
-Perfect 👍 — here’s the **improved and professional English version** of your `README.md`, ready to paste directly into your GitHub repo.
 
-It follows best practices for GitHub documentation (clear headings, code formatting, badges-style layout, and concise technical language).
-
----
-
-```markdown
 # 🇲🇦 Annual Income Prediction App — Morocco
 
 A complete **Machine Learning web application** that predicts the **annual income of Moroccan citizens** based on socio-demographic and professional characteristics.
@@ -200,4 +194,5 @@ This project is released under the **MIT License**.
 You are free to use, modify, and distribute it with proper attribution.
 
 ---
+
 
