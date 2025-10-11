@@ -1,4 +1,3 @@
---- START OF FILE README.md ---
 
 # 🩺 SkinSafe - Melanoma Detection with Deep Learning
 
@@ -124,12 +123,12 @@ The project incorporates several design patterns for improved structure, flexibi
 ## 🤝 Authors
 
 -   [Hafsa Tauil](https://github.com/TauilHafsa)
--   _Add other contributors here if any_
 
 ---
 
 ## 📃 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for more details.
+
 
 ---
