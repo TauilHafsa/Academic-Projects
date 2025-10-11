@@ -1,0 +1,39 @@
+# Core Flask dependencies
+Flask==2.3.3
+Flask-SocketIO==5.3.6
+
+# PyTorch and AI/ML dependencies
+torch==2.0.1
+torchvision==0.15.2
+timm==0.9.7
+numpy==1.24.3
+Pillow==10.0.0
+transformers==4.34.0
+
+# Image processing
+opencv-python==4.8.1.78
+pydicom==2.4.3
+
+# Web and utilities
+Werkzeug==2.3.7
+python-socketio==5.8.0
+python-engineio==4.7.1
+
+# Progress and utilities
+tqdm==4.66.1
+secrets
+
+# Optional: For production deployment
+# gunicorn==21.2.0
+# eventlet==0.33.3
+
+# Development dependencies (optional)
+# jupyter==1.0.0
+# matplotlib==3.7.2
+# seaborn==0.12.2
+
+Flask-SQLAlchemy==3.0.5
+SQLAlchemy==2.0.21
+PyMySQL==1.1.0
+mysql-connector-python==8.1.0
+python-dotenv==1.0.0

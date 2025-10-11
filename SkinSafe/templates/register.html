@@ -1,0 +1,721 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkinSafe - Inscription</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --warning-color: #f39c12;
+            --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body {
+            background: var(--gradient-bg);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 0;
+        }
+
+        .auth-container {
+            max-width: 500px;
+            width: 100%;
+            margin: 20px;
+        }
+
+        .auth-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            animation: slideIn 0.6s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .auth-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        .auth-body {
+            padding: 2rem;
+        }
+
+        .form-floating {
+            margin-bottom: 1.2rem;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            padding: 1rem 0.75rem;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .form-control.is-valid {
+            border-color: var(--success-color);
+        }
+
+        .form-control.is-invalid {
+            border-color: var(--danger-color);
+        }
+
+        .form-label {
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:focus {
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.5);
+        }
+
+        .auth-link {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .auth-link:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #dee2e6;
+        }
+
+        .divider span {
+            padding: 0 1rem;
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        .social-btn {
+            width: 100%;
+            padding: 12px 0;
+            border-radius: 10px;
+            font-weight: 500;
+            margin-bottom: 10px;
+            transition: all 0.3s ease;
+            border: 2px solid;
+        }
+
+        .google-btn {
+            background: white;
+            color: #db4437;
+            border-color: #db4437;
+        }
+
+        .google-btn:hover {
+            background: #db4437;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .facebook-btn {
+            background: white;
+            color: #3b5998;
+            border-color: #3b5998;
+        }
+
+        .facebook-btn:hover {
+            background: #3b5998;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .back-home {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .back-home:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: none;
+            color: #6c757d;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .password-field {
+            position: relative;
+        }
+
+        .password-strength {
+            margin-top: 5px;
+            font-size: 0.85rem;
+        }
+
+        .strength-bar {
+            height: 4px;
+            border-radius: 2px;
+            background: #e9ecef;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+
+        .strength-fill {
+            height: 100%;
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .strength-weak { background: var(--danger-color); width: 25%; }
+        .strength-fair { background: var(--warning-color); width: 50%; }
+        .strength-good { background: var(--secondary-color); width: 75%; }
+        .strength-strong { background: var(--success-color); width: 100%; }
+
+        @media (max-width: 576px) {
+            .auth-container {
+                margin: 10px;
+            }
+            
+            .auth-body {
+                padding: 1.5rem;
+            }
+            
+            .auth-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        .alert {
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .terms-text {
+            font-size: 0.9rem;
+            color: #6c757d;
+            line-height: 1.4;
+        }
+
+        .valid-feedback, .invalid-feedback {
+            font-size: 0.85rem;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-home">
+        <i class="fas fa-arrow-left me-2"></i>Accueil
+    </a>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="loading-overlay" id="loadingOverlay">
+                <div class="spinner"></div>
+            </div>
+            
+            <div class="auth-header">
+                <h1 class="auth-title">
+                    <i class="fas fa-microscope me-2"></i>SkinSafe
+                </h1>
+                <p class="auth-subtitle">Créez votre compte</p>
+            </div>
+
+            <div class="auth-body">
+                <div id="alertContainer"></div>
+
+                {% if error %}
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="fas fa-exclamation-triangle me-2"></i>
+                    {{ error }}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                </div>
+                {% endif %}
+
+                <form id="registerForm" method="post" action="/api/register">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="firstName" name="firstName" placeholder="Prénom" required>
+                                <label for="firstName">
+                                    <i class="fas fa-user me-2"></i>Prénom
+                                </label>
+                                <div class="invalid-feedback"></div>
+                                <div class="valid-feedback">Valide !</div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-floating">
+                                <input type="text" class="form-control" id="lastName" name="lastName" placeholder="Nom" required>
+                                <label for="lastName">
+                                    <i class="fas fa-user me-2"></i>Nom
+                                </label>
+                                <div class="invalid-feedback"></div>
+                                <div class="valid-feedback">Valide !</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-floating">
+                        <input type="email" class="form-control" id="email" name="email" placeholder="nom@exemple.com" required>
+                        <label for="email">
+                            <i class="fas fa-envelope me-2"></i>Adresse email
+                        </label>
+                        <div class="invalid-feedback"></div>
+                        <div class="valid-feedback">Valide !</div>
+                    </div>
+
+                    <div class="form-floating">
+                        <input type="tel" class="form-control" id="phone" name="phone" placeholder="Téléphone">
+                        <label for="phone">
+                            <i class="fas fa-phone me-2"></i>Téléphone (optionnel)
+                        </label>
+                        <div class="invalid-feedback"></div>
+                        <div class="valid-feedback">Valide !</div>
+                    </div>
+
+                    <div class="form-floating password-field">
+                        <input type="password" class="form-control" id="password" name="password" placeholder="Mot de passe" required>
+                        <label for="password">
+                            <i class="fas fa-lock me-2"></i>Mot de passe
+                        </label>
+                        <button type="button" class="password-toggle" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <div class="password-strength">
+                            <div class="strength-bar">
+                                <div class="strength-fill" id="strengthFill"></div>
+                            </div>
+                            <div id="strengthText" class="mt-1"></div>
+                        </div>
+                        <div class="invalid-feedback"></div>
+                    </div>
+
+                    <div class="form-floating password-field">
+                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" placeholder="Confirmer le mot de passe" required>
+                        <label for="confirmPassword">
+                            <i class="fas fa-lock me-2"></i>Confirmer le mot de passe
+                        </label>
+                        <button type="button" class="password-toggle" id="toggleConfirmPassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                        <div class="invalid-feedback"></div>
+                        <div class="valid-feedback">Les mots de passe correspondent !</div>
+                    </div>
+
+                    <div class="form-check mb-3">
+                        <input class="form-check-input" type="checkbox" id="agreeTerms" name="agreeTerms" required>
+                        <label class="form-check-label terms-text" for="agreeTerms">
+                            J'accepte les <a href="/terms" class="auth-link">conditions d'utilisation</a> 
+                            et la <a href="/privacy" class="auth-link">politique de confidentialité</a>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 mb-3">
+                        <i class="fas fa-user-plus me-2"></i>
+                        Créer mon compte
+                    </button>
+                </form>
+
+                <div class="text-center mt-4">
+                    <p class="mb-0">
+                        Vous avez déjà un compte ?
+                        <a href="/login" class="auth-link">Se connecter</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const registerForm = document.getElementById('registerForm');
+            const togglePassword = document.getElementById('togglePassword');
+            const toggleConfirmPassword = document.getElementById('toggleConfirmPassword');
+            const passwordField = document.getElementById('password');
+            const confirmPasswordField = document.getElementById('confirmPassword');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const alertContainer = document.getElementById('alertContainer');
+            const strengthFill = document.getElementById('strengthFill');
+            const strengthText = document.getElementById('strengthText');
+
+            // Toggle password visibility
+            togglePassword.addEventListener('click', function() {
+                togglePasswordVisibility(passwordField, this);
+            });
+
+            toggleConfirmPassword.addEventListener('click', function() {
+                togglePasswordVisibility(confirmPasswordField, this);
+            });
+
+            function togglePasswordVisibility(field, button) {
+                const type = field.getAttribute('type') === 'password' ? 'text' : 'password';
+                field.setAttribute('type', type);
+                
+                const icon = button.querySelector('i');
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
+            }
+
+            // Password strength checker
+            passwordField.addEventListener('input', function() {
+                checkPasswordStrength(this.value);
+                validatePassword();
+            });
+
+            confirmPasswordField.addEventListener('input', validatePasswordMatch);
+
+            function checkPasswordStrength(password) {
+                let strength = 0;
+                let text = '';
+                let className = '';
+
+                if (password.length >= 8) strength++;
+                if (/[a-z]/.test(password)) strength++;
+                if (/[A-Z]/.test(password)) strength++;
+                if (/[0-9]/.test(password)) strength++;
+                if (/[^A-Za-z0-9]/.test(password)) strength++;
+
+                switch (strength) {
+                    case 0:
+                    case 1:
+                        text = 'Très faible';
+                        className = 'strength-weak';
+                        break;
+                    case 2:
+                        text = 'Faible';
+                        className = 'strength-weak';
+                        break;
+                    case 3:
+                        text = 'Moyen';
+                        className = 'strength-fair';
+                        break;
+                    case 4:
+                        text = 'Fort';
+                        className = 'strength-good';
+                        break;
+                    case 5:
+                        text = 'Très fort';
+                        className = 'strength-strong';
+                        break;
+                }
+
+                strengthFill.className = `strength-fill ${className}`;
+                strengthText.textContent = password.length > 0 ? `Force: ${text}` : '';
+            }
+
+            function validatePassword() {
+                const password = passwordField.value;
+                const isValid = password.length >= 6; // Changed to match Flask validation
+                
+                if (password.length > 0) {
+                    if (isValid) {
+                        passwordField.classList.add('is-valid');
+                        passwordField.classList.remove('is-invalid');
+                    } else {
+                        passwordField.classList.add('is-invalid');
+                        passwordField.classList.remove('is-valid');
+                        const feedback = passwordField.parentNode.querySelector('.invalid-feedback');
+                        feedback.textContent = 'Le mot de passe doit contenir au moins 6 caractères.';
+                    }
+                }
+                
+                validatePasswordMatch();
+            }
+
+            function validatePasswordMatch() {
+                const password = passwordField.value;
+                const confirmPassword = confirmPasswordField.value;
+                
+                if (confirmPassword.length > 0) {
+                    if (password === confirmPassword) {
+                        confirmPasswordField.classList.add('is-valid');
+                        confirmPasswordField.classList.remove('is-invalid');
+                    } else {
+                        confirmPasswordField.classList.add('is-invalid');
+                        confirmPasswordField.classList.remove('is-valid');
+                        const feedback = confirmPasswordField.parentNode.querySelector('.invalid-feedback');
+                        feedback.textContent = 'Les mots de passe ne correspondent pas.';
+                    }
+                }
+            }
+
+            // Real-time validation for other fields
+            const inputs = document.querySelectorAll('.form-control');
+            inputs.forEach(input => {
+                input.addEventListener('blur', function() {
+                    validateField(this);
+                });
+
+                input.addEventListener('input', function() {
+                    if (this.classList.contains('is-invalid') || this.classList.contains('is-valid')) {
+                        validateField(this);
+                    }
+                });
+            });
+
+            function validateField(field) {
+                const value = field.value.trim();
+                let isValid = true;
+                let message = '';
+
+                switch (field.id) {
+                    case 'firstName':
+                    case 'lastName':
+                        isValid = value.length >= 2 && /^[a-zA-ZÀ-ÿ\s'-]+$/.test(value);
+                        message = 'Doit contenir au moins 2 caractères et uniquement des lettres.';
+                        break;
+                    
+                    case 'email':
+                        isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+                        message = 'Veuillez entrer une adresse email valide.';
+                        break;
+                    
+                    case 'phone':
+                        if (value.length > 0) {
+                            isValid = /^(\+33|0)[1-9](\d{8})$/.test(value.replace(/[\s.-]/g, ''));
+                            message = 'Veuillez entrer un numéro de téléphone français valide.';
+                        }
+                        break;
+                }
+
+                if (field.hasAttribute('required') && value.length === 0) {
+                    isValid = false;
+                    message = 'Ce champ est obligatoire.';
+                }
+
+                if (value.length > 0 || field.hasAttribute('required')) {
+                    if (isValid) {
+                        field.classList.add('is-valid');
+                        field.classList.remove('is-invalid');
+                    } else {
+                        field.classList.add('is-invalid');
+                        field.classList.remove('is-valid');
+                        const feedback = field.parentNode.querySelector('.invalid-feedback');
+                        if (feedback) {
+                            feedback.textContent = message;
+                        }
+                    }
+                }
+            }
+
+            // Form submission with AJAX
+            registerForm.addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                // Validate all fields
+                let isFormValid = true;
+                inputs.forEach(input => {
+                    if (input.hasAttribute('required')) {
+                        validateField(input);
+                        if (input.classList.contains('is-invalid')) {
+                            isFormValid = false;
+                        }
+                    }
+                });
+
+                // Check if terms are accepted
+                const agreeTerms = document.getElementById('agreeTerms');
+                if (!agreeTerms.checked) {
+                    showAlert('Veuillez accepter les conditions d\'utilisation.', 'danger');
+                    isFormValid = false;
+                }
+
+                if (!isFormValid) {
+                    showAlert('Veuillez corriger les erreurs dans le formulaire.', 'danger');
+                    return;
+                }
+
+                // Show loading
+                loadingOverlay.style.display = 'flex';
+
+                try {
+                    const formData = new FormData(registerForm);
+                    const response = await fetch('/api/register', {
+                        method: 'POST',
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        },
+                        body: formData
+                    });
+
+                    const result = await response.json();
+
+                    if (response.ok && result.success) {
+                        showAlert('Compte créé avec succès ! Redirection vers le tableau de bord...', 'success');
+                        
+                        // Redirect to dashboard
+                        setTimeout(() => {
+                            window.location.href = result.redirect_url || '/dashboard';
+                        }, 1500);
+                    } else {
+                        showAlert(result.error || 'Une erreur est survenue lors de l\'inscription.', 'danger');
+                    }
+                } catch (error) {
+                    console.error('Erreur:', error);
+                    showAlert('Une erreur est survenue. Veuillez réessayer.', 'danger');
+                }
+
+                loadingOverlay.style.display = 'none';
+            });
+
+            // Alert function
+            function showAlert(message, type) {
+                const alertHtml = `
+                    <div class="alert alert-${type} alert-dismissible fade show" role="alert">
+                        <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'danger' ? 'exclamation-triangle' : type === 'info' ? 'info-circle' : 'exclamation-circle'} me-2"></i>
+                        ${message}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                `;
+                alertContainer.innerHTML = alertHtml;
+                
+                // Auto remove after 5 seconds for non-success alerts
+                if (type !== 'success') {
+                    setTimeout(() => {
+                        const alert = alertContainer.querySelector('.alert');
+                        if (alert) {
+                            alert.remove();
+                        }
+                    }, 5000);
+                }
+            }
+
+            // Email availability check (debounced)
+            let emailTimeout;
+            document.getElementById('email').addEventListener('input', function() {
+                clearTimeout(emailTimeout);
+                const email = this.value.trim();
+                
+                if (email && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    emailTimeout = setTimeout(async () => {
+                        try {
+                            const response = await fetch(`/api/check-email?email=${encodeURIComponent(email)}`);
+                            const result = await response.json();
+                            
+                            if (result.exists) {
+                                this.classList.add('is-invalid');
+                                this.classList.remove('is-valid');
+                                const feedback = this.parentNode.querySelector('.invalid-feedback');
+                                feedback.textContent = 'Cette adresse email est déjà utilisée.';
+                            }
+                        } catch (error) {
+                            console.error('Erreur lors de la vérification de l\'email:', error);
+                        }
+                    }, 500);
+                }
+            });
+        });
+    </script>
+</body>
+</html>

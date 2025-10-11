@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SkinSafe - Connexion</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --danger-color: #e74c3c;
+            --gradient-bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        body {
+            background: var(--gradient-bg);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-container {
+            max-width: 450px;
+            width: 100%;
+            margin: 20px;
+        }
+
+        .auth-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+            animation: slideIn 0.6s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .auth-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        .auth-title {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .auth-subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            margin: 0;
+        }
+
+        .auth-body {
+            padding: 2rem;
+        }
+
+        .form-floating {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-control {
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            padding: 1rem 0.75rem;
+        }
+
+        .form-control:focus {
+            border-color: var(--secondary-color);
+            box-shadow: 0 0 0 0.2rem rgba(52, 152, 219, 0.25);
+        }
+
+        .form-label {
+            color: #6c757d;
+            font-weight: 500;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 12px 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:focus {
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.5);
+        }
+
+        .btn-primary:disabled {
+            transform: none;
+            opacity: 0.7;
+        }
+
+        .auth-link {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .auth-link:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+
+        .back-home {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            color: white;
+            padding: 10px 15px;
+            border-radius: 10px;
+            text-decoration: none;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s ease;
+        }
+
+        .back-home:hover {
+            background: rgba(255, 255, 255, 0.3);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: none;
+            color: #6c757d;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        .password-field {
+            position: relative;
+        }
+
+        @media (max-width: 576px) {
+            .auth-container {
+                margin: 10px;
+            }
+            
+            .auth-body {
+                padding: 1.5rem;
+            }
+            
+            .auth-title {
+                font-size: 1.5rem;
+            }
+        }
+
+        .alert {
+            border-radius: 10px;
+            margin-bottom: 1rem;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            border-radius: 20px;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid var(--secondary-color);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <a href="/" class="back-home">
+        <i class="fas fa-arrow-left me-2"></i>Accueil
+    </a>
+
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="loading-overlay" id="loadingOverlay">
+                <div class="spinner"></div>
+            </div>
+            
+            <div class="auth-header">
+                <h1 class="auth-title">
+                    <i class="fas fa-microscope me-2"></i>SkinSafe
+                </h1>
+                <p class="auth-subtitle">Connectez-vous à votre compte</p>
+            </div>
+
+            <div class="auth-body">
+                <div id="alertContainer">
+                    {% if error %}
+                    <div class="alert alert-danger alert-dismissible fade show">
+                        <i class="fas fa-exclamation-circle me-2"></i>
+                        {{ error }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endif %}
+                </div>
+
+                <form id="loginForm" method="post" action="/login">
+                    <div class="form-floating">
+                        <input type="email" class="form-control" id="email" name="email" placeholder="nom@exemple.com" required>
+                        <label for="email">
+                            <i class="fas fa-envelope me-2"></i>Adresse email
+                        </label>
+                    </div>
+
+                    <div class="form-floating password-field">
+                        <input type="password" class="form-control" id="password" name="mot_de_passe" placeholder="Mot de passe" required>
+                        <label for="password">
+                            <i class="fas fa-lock me-2"></i>Mot de passe
+                        </label>
+                        <button type="button" class="password-toggle" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="rememberMe" name="remember">
+                            <label class="form-check-label" for="rememberMe">
+                                Se souvenir de moi
+                            </label>
+                        </div>
+                        <a href="/forgot-password" class="auth-link">
+                            Mot de passe oublié ?
+                        </a>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary w-100 mb-3" id="submitBtn">
+                        <i class="fas fa-sign-in-alt me-2"></i>
+                        Se connecter
+                    </button>
+                </form>
+
+                <div class="text-center mt-4">
+                    <p class="mb-0">
+                        Vous n'avez pas de compte ?
+                        <a href="/register" class="auth-link">Créer un compte</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const loginForm = document.getElementById('loginForm');
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordField = document.getElementById('password');
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            const alertContainer = document.getElementById('alertContainer');
+            const submitBtn = document.getElementById('submitBtn');
+
+            // Toggle password visibility
+            togglePassword.addEventListener('click', function() {
+                const type = passwordField.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordField.setAttribute('type', type);
+                
+                const icon = this.querySelector('i');
+                icon.classList.toggle('fa-eye');
+                icon.classList.toggle('fa-eye-slash');
+            });
+
+            // Handle form submission with AJAX
+            loginForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+
+                // Validation simple
+                if (!validateEmail(email)) {
+                    showAlert('Veuillez entrer une adresse email valide.', 'danger');
+                    return;
+                }
+
+                if (password.length < 6) {
+                    showAlert('Le mot de passe doit contenir au moins 6 caractères.', 'danger');
+                    return;
+                }
+
+                // Submit to Flask backend
+                submitLogin(email, password);
+            });
+
+            function validateEmail(email) {
+                const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                return re.test(email);
+            }
+
+            function submitLogin(email, password) {
+                showLoading(true);
+                clearAlerts();
+                submitBtn.disabled = true;
+
+                const formData = new FormData();
+                formData.append('email', email);
+                formData.append('mot_de_passe', password);
+                formData.append('remember', document.getElementById('rememberMe').checked);
+
+                fetch('/login', {
+                    method: 'POST',
+                    body: formData
+                })
+                .then(response => {
+                    if (response.redirected) {
+                        // Flask redirected us, follow the redirect
+                        window.location.href = response.url;
+                        return;
+                    }
+                    return response.text();
+                })
+                .then(data => {
+                    if (typeof data === 'string') {
+                        // Check if it's a successful redirect by looking at the response
+                        if (data.includes('dashboard') || data.includes('Tableau de bord')) {
+                            showAlert('Connexion réussie ! Redirection...', 'success');
+                            setTimeout(() => {
+                                window.location.href = '/dashboard';
+                            }, 1500);
+                        } else {
+                            // Parse the HTML to extract error message
+                            const parser = new DOMParser();
+                            const doc = parser.parseFromString(data, 'text/html');
+                            const errorAlert = doc.querySelector('.alert-danger');
+                            if (errorAlert) {
+                                const errorText = errorAlert.textContent.trim();
+                                showAlert(errorText, 'danger');
+                            } else {
+                                showAlert('Erreur lors de la connexion.', 'danger');
+                            }
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Erreur:', error);
+                    showAlert('Erreur de connexion au serveur.', 'danger');
+                })
+                .finally(() => {
+                    showLoading(false);
+                    submitBtn.disabled = false;
+                });
+            }
+
+            function showLoading(show) {
+                loadingOverlay.style.display = show ? 'flex' : 'none';
+            }
+
+            function showAlert(message, type) {
+                clearAlerts();
+                const alertDiv = document.createElement('div');
+                alertDiv.className = `alert alert-${type} alert-dismissible fade show`;
+                alertDiv.innerHTML = `
+                    <i class="fas fa-${type === 'success' ? 'check-circle' : type === 'danger' ? 'exclamation-circle' : 'info-circle'} me-2"></i>
+                    ${message}
+                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                `;
+
+                alertContainer.appendChild(alertDiv);
+
+                // Auto-remove after 5 seconds
+                setTimeout(() => {
+                    if (alertDiv.parentNode) {
+                        alertDiv.remove();
+                    }
+                }, 5000);
+            }
+
+            function clearAlerts() {
+                // Only clear JavaScript-generated alerts, keep Flask template alerts
+                const alerts = alertContainer.querySelectorAll('.alert:not([data-server-error])');
+                alerts.forEach(alert => alert.remove());
+            }
+
+            // Form validation styling  
+            const inputs = document.querySelectorAll('.form-control');
+            inputs.forEach(input => {
+                input.addEventListener('blur', function() {
+                    if (this.value.trim() !== '') {
+                        this.classList.add('is-valid');
+                        this.classList.remove('is-invalid');
+                    }
+                });
+
+                input.addEventListener('input', function() {
+                    this.classList.remove('is-invalid', 'is-valid');
+                });
+            });
+
+            console.log('Page de connexion initialisée');
+        });
+    </script>
+</body>
+</html>

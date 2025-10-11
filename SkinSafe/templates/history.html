@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique des Prédictions - SkinSafe</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin-top: 30px;
+            padding-bottom: 50px;
+        }
+        
+        .prediction-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        .prediction-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        
+        .prediction-image {
+            width: 150px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+        }
+        
+        .prediction-high {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+        }
+        
+        .prediction-medium {
+            background: linear-gradient(135deg, #fd7e14, #e55a00);
+            color: white;
+        }
+        
+        .prediction-low {
+            background: linear-gradient(135deg, #198754, #157347);
+            color: white;
+        }
+        
+        .prediction-score {
+            font-size: 2.2rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 1000;
+            border-radius: 50px;
+            padding: 10px 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        
+        .stats-card {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 25px rgba(108, 92, 231, 0.2);
+        }
+        
+        .stats-card h3 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        }
+        
+        .empty-state i {
+            font-size: 5rem;
+            margin-bottom: 25px;
+            color: #6c757d;
+            opacity: 0.6;
+        }
+        
+        .filter-buttons {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+        
+        .filter-buttons .btn {
+            margin: 5px;
+            border-radius: 25px;
+            padding: 8px 20px;
+            font-weight: 500;
+            border-width: 2px;
+        }
+        
+        .risk-badge {
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-weight: 600;
+        }
+        
+        .progress {
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            transition: width 0.6s ease;
+        }
+        
+        .main-title {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+        
+        .timestamp {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .recommendation {
+            font-size: 0.95rem;
+            margin-top: 10px;
+        }
+        
+        .fade-in {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+        }
+        
+        .fade-in.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        @media (max-width: 768px) {
+            .prediction-image {
+                width: 120px;
+                height: 120px;
+            }
+            
+            .prediction-score {
+                font-size: 1.8rem;
+            }
+            
+            .back-btn {
+                top: 10px;
+                left: 10px;
+            }
+            
+            .container {
+                margin-top: 20px;
+                padding: 0 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Bouton de retour -->
+    <a href="/dashboard" class="btn btn-primary back-btn">
+        <i class="fas fa-arrow-left me-2"></i>Retour
+    </a>
+
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1 class="text-center main-title">
+                    <i class="fas fa-history me-3"></i>Historique des Prédictions
+                </h1>
+
+                <!-- Simulation de données pour la démonstration -->
+                <div id="demo-content">
+                    <!-- Statistiques -->
+                    <div class="stats-card fade-in">
+                        <div class="row text-center">
+                            <div class="col-6 col-md-3">
+                                <h3 id="total-count">5</h3>
+                                <p class="mb-0">Total</p>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <h3 id="high-risk-count">1</h3>
+                                <p class="mb-0">Risque Élevé</p>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <h3 id="medium-risk-count">2</h3>
+                                <p class="mb-0">Risque Moyen</p>
+                            </div>
+                            <div class="col-6 col-md-3">
+                                <h3 id="low-risk-count">2</h3>
+                                <p class="mb-0">Risque Faible</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Filtres -->
+                    <div class="filter-buttons fade-in">
+                        <button class="btn btn-outline-primary active" onclick="filterPredictions('all')">
+                            <i class="fas fa-list me-1"></i>Toutes
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="filterPredictions('high')">
+                            <i class="fas fa-exclamation-triangle me-1"></i>Risque Élevé
+                        </button>
+                        <button class="btn btn-outline-warning" onclick="filterPredictions('medium')">
+                            <i class="fas fa-exclamation-circle me-1"></i>Risque Moyen
+                        </button>
+                        <button class="btn btn-outline-success" onclick="filterPredictions('low')">
+                            <i class="fas fa-check-circle me-1"></i>Risque Faible
+                        </button>
+                    </div>
+
+                    <!-- Liste des prédictions (exemples) -->
+                    <div id="predictions-container">
+                        <!-- Exemple 1: Risque élevé -->
+                        <div class="prediction-card p-4 fade-in" data-risk-level="high">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 text-center mb-3 mb-md-0">
+                                    <div class="prediction-image d-flex align-items-center justify-content-center bg-light">
+                                        <i class="fas fa-image fa-3x text-muted"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <h6 class="mb-0 me-2">Analyse du</h6>
+                                        <span class="timestamp">2024-12-15 à 14:30:22</span>
+                                    </div>
+                                    
+                                    <div class="mb-2">
+                                        <span class="badge bg-danger risk-badge">
+                                            <i class="fas fa-exclamation-triangle me-1"></i>Risque Élevé
+                                        </span>
+                                        <p class="recommendation text-danger mb-0">
+                                            <strong>Recommandation:</strong> Consultez un dermatologue rapidement
+                                        </p>
+                                    </div>
+
+                                    <div class="progress mt-3" style="height: 10px;">
+                                        <div class="progress-bar bg-danger" 
+                                            role="progressbar" 
+                                            style="width: 85%"
+                                            aria-valuenow="85" 
+                                            aria-valuemin="0" 
+                                            aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 text-center mt-3 mt-md-0">
+                                    <div class="p-3 rounded prediction-high">
+                                        <div class="prediction-score">85%</div>
+                                        <small>Probabilité</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Exemple 2: Risque moyen -->
+                        <div class="prediction-card p-4 fade-in" data-risk-level="medium">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 text-center mb-3 mb-md-0">
+                                    <div class="prediction-image d-flex align-items-center justify-content-center bg-light">
+                                        <i class="fas fa-image fa-3x text-muted"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <h6 class="mb-0 me-2">Analyse du</h6>
+                                        <span class="timestamp">2024-12-14 à 09:15:45</span>
+                                    </div>
+                                    
+                                    <div class="mb-2">
+                                        <span class="badge bg-warning risk-badge">
+                                            <i class="fas fa-exclamation-circle me-1"></i>Risque Moyen
+                                        </span>
+                                        <p class="recommendation text-warning mb-0">
+                                            <strong>Recommandation:</strong> Surveillez et consultez si nécessaire
+                                        </p>
+                                    </div>
+
+                                    <div class="progress mt-3" style="height: 10px;">
+                                        <div class="progress-bar bg-warning" 
+                                            role="progressbar" 
+                                            style="width: 55%"
+                                            aria-valuenow="55" 
+                                            aria-valuemin="0" 
+                                            aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 text-center mt-3 mt-md-0">
+                                    <div class="p-3 rounded prediction-medium">
+                                        <div class="prediction-score">55%</div>
+                                        <small>Probabilité</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Exemple 3: Risque faible -->
+                        <div class="prediction-card p-4 fade-in" data-risk-level="low">
+                            <div class="row align-items-center">
+                                <div class="col-md-3 text-center mb-3 mb-md-0">
+                                    <div class="prediction-image d-flex align-items-center justify-content-center bg-light">
+                                        <i class="fas fa-image fa-3x text-muted"></i>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <h6 class="mb-0 me-2">Analyse du</h6>
+                                        <span class="timestamp">2024-12-13 à 16:42:18</span>
+                                    </div>
+                                    
+                                    <div class="mb-2">
+                                        <span class="badge bg-success risk-badge">
+                                            <i class="fas fa-check-circle me-1"></i>Risque Faible
+                                        </span>
+                                        <p class="recommendation text-success mb-0">
+                                            <strong>Recommandation:</strong> Continuez la surveillance régulière
+                                        </p>
+                                    </div>
+
+                                    <div class="progress mt-3" style="height: 10px;">
+                                        <div class="progress-bar bg-success" 
+                                            role="progressbar" 
+                                            style="width: 20%"
+                                            aria-valuenow="20" 
+                                            aria-valuemin="0" 
+                                            aria-valuemax="100">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-3 text-center mt-3 mt-md-0">
+                                    <div class="p-3 rounded prediction-low">
+                                        <div class="prediction-score">20%</div>
+                                        <small>Probabilité</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- État vide (caché par défaut dans cette démo) -->
+                <div class="empty-state" id="empty-state" style="display: none;">
+                    <i class="fas fa-clipboard-list"></i>
+                    <h3>Aucun historique disponible</h3>
+                    <p class="lead">Vous n'avez pas encore effectué d'analyse d'images.</p>
+                    <a href="/" class="btn btn-primary btn-lg">
+                        <i class="fas fa-plus me-2"></i>Commencer une analyse
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Variables globales
+        let allPredictions = [];
+        let currentFilter = 'all';
+
+        // Initialisation au chargement de la page
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePage();
+            calculateStatistics();
+            animateElements();
+        });
+
+        // Fonction d'initialisation
+        function initializePage() {
+            allPredictions = Array.from(document.querySelectorAll('.prediction-card'));
+            console.log('Page initialisée avec', allPredictions.length, 'prédictions');
+        }
+
+        // Calcul des statistiques
+        function calculateStatistics() {
+            const predictions = document.querySelectorAll('.prediction-card[data-risk-level]');
+            let highRisk = 0, mediumRisk = 0, lowRisk = 0;
+
+            predictions.forEach(card => {
+                const riskLevel = card.getAttribute('data-risk-level');
+                switch(riskLevel) {
+                    case 'high':
+                        highRisk++;
+                        break;
+                    case 'medium':
+                        mediumRisk++;
+                        break;
+                    case 'low':
+                        lowRisk++;
+                        break;
+                }
+            });
+
+            // Mise à jour des compteurs avec animation
+            animateCounter('total-count', predictions.length);
+            animateCounter('high-risk-count', highRisk);
+            animateCounter('medium-risk-count', mediumRisk);
+            animateCounter('low-risk-count', lowRisk);
+        }
+
+        // Animation des compteurs
+        function animateCounter(elementId, finalValue) {
+            const element = document.getElementById(elementId);
+            if (!element) return;
+            
+            let currentValue = 0;
+            const increment = Math.ceil(finalValue / 20);
+            const timer = setInterval(() => {
+                currentValue += increment;
+                if (currentValue >= finalValue) {
+                    currentValue = finalValue;
+                    clearInterval(timer);
+                }
+                element.textContent = currentValue;
+            }, 50);
+        }
+
+        // Fonction de filtrage améliorée
+        function filterPredictions(level) {
+            const predictions = document.querySelectorAll('.prediction-card[data-risk-level]');
+            const buttons = document.querySelectorAll('.filter-buttons button');
+            
+            // Mise à jour des boutons actifs
+            buttons.forEach(btn => btn.classList.remove('active'));
+            
+            // Trouver le bouton cliqué et l'activer
+            const clickedButton = Array.from(buttons).find(btn => 
+                btn.onclick && btn.onclick.toString().includes(level)
+            );
+            if (clickedButton) {
+                clickedButton.classList.add('active');
+            }
+
+            currentFilter = level;
+
+            // Animation de sortie puis d'entrée
+            predictions.forEach((card, index) => {
+                const riskLevel = card.getAttribute('data-risk-level');
+                const shouldShow = level === 'all' || riskLevel === level;
+                
+                // Animation de sortie
+                card.style.transition = 'all 0.3s ease';
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(-10px)';
+                
+                setTimeout(() => {
+                    if (shouldShow) {
+                        card.style.display = 'block';
+                        setTimeout(() => {
+                            card.style.opacity = '1';
+                            card.style.transform = 'translateY(0)';
+                        }, 50);
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }, 150);
+            });
+
+            // Afficher message si aucun résultat
+            setTimeout(() => {
+                const visibleCards = Array.from(predictions).filter(card => 
+                    card.style.display !== 'none'
+                );
+                
+                if (visibleCards.length === 0 && level !== 'all') {
+                    showNoResultsMessage(level);
+                } else {
+                    hideNoResultsMessage();
+                }
+            }, 300);
+        }
+
+        // Afficher message "aucun résultat"
+        function showNoResultsMessage(level) {
+            const container = document.getElementById('predictions-container');
+            let noResultsDiv = document.getElementById('no-results-message');
+            
+            if (!noResultsDiv) {
+                noResultsDiv = document.createElement('div');
+                noResultsDiv.id = 'no-results-message';
+                noResultsDiv.className = 'text-center py-5';
+                container.appendChild(noResultsDiv);
+            }
+            
+            const levelNames = {
+                'high': 'risque élevé',
+                'medium': 'risque moyen', 
+                'low': 'risque faible'
+            };
+            
+            noResultsDiv.innerHTML = `
+                <i class="fas fa-search fa-3x text-muted mb-3"></i>
+                <h4>Aucune prédiction trouvée</h4>
+                <p class="text-muted">Il n'y a pas d'analyses avec un ${levelNames[level]} dans votre historique.</p>
+            `;
+        }
+
+        // Masquer message "aucun résultat"
+        function hideNoResultsMessage() {
+            const noResultsDiv = document.getElementById('no-results-message');
+            if (noResultsDiv) {
+                noResultsDiv.remove();
+            }
+        }
+
+        // Animation d'apparition des éléments
+        function animateElements() {
+            const elements = document.querySelectorAll('.fade-in');
+            
+            elements.forEach((element, index) => {
+                setTimeout(() => {
+                    element.classList.add('show');
+                }, index * 100);
+            });
+        }
+
+        // Gestionnaire pour le retour en haut
+        function scrollToTop() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        }
+
+        // Ajouter un bouton de retour en haut si nécessaire
+        window.addEventListener('scroll', function() {
+            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            let backToTopBtn = document.getElementById('back-to-top');
+            
+            if (scrollTop > 300) {
+                if (!backToTopBtn) {
+                    backToTopBtn = document.createElement('button');
+                    backToTopBtn.id = 'back-to-top';
+                    backToTopBtn.className = 'btn btn-primary position-fixed';
+                    backToTopBtn.style.cssText = `
+                        bottom: 20px; 
+                        right: 20px; 
+                        z-index: 1000; 
+                        border-radius: 50%; 
+                        width: 50px; 
+                        height: 50px;
+                        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                    `;
+                    backToTopBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+                    backToTopBtn.onclick = scrollToTop;
+                    document.body.appendChild(backToTopBtn);
+                }
+            } else if (backToTopBtn) {
+                backToTopBtn.remove();
+            }
+        });
+
+        // Gestionnaire d'erreurs globales
+        window.addEventListener('error', function(e) {
+            console.error('Erreur détectée:', e.error);
+        });
+
+        // Log pour debug
+        console.log('Script d\'historique des prédictions chargé avec succès');
+    </script>
+</body>
+</html>

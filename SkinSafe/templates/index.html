@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analyse d'Image - SkinSafe</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Fond animé */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 40% 80%, rgba(255, 255, 255, 0.06) 0%, transparent 50%);
+            animation: float 6s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-10px) rotate(1deg); }
+        }
+
+        .container {
+            max-width: 700px;
+            margin-top: 30px;
+            padding-bottom: 50px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .main-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 25px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .main-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            color: white;
+            padding: 25px;
+            text-align: center;
+            border: none;
+        }
+
+        .main-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-bottom: 0;
+        }
+
+        .upload-zone {
+            border: 3px dashed #6c5ce7;
+            border-radius: 20px;
+            padding: 40px 20px;
+            text-align: center;
+            background: linear-gradient(135deg, rgba(108, 92, 231, 0.05), rgba(162, 155, 254, 0.05));
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .upload-zone::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(108, 92, 231, 0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s ease;
+            opacity: 0;
+        }
+
+        .upload-zone:hover {
+            border-color: #a29bfe;
+            background: linear-gradient(135deg, rgba(108, 92, 231, 0.1), rgba(162, 155, 254, 0.1));
+            transform: translateY(-2px);
+        }
+
+        .upload-zone:hover::before {
+            opacity: 1;
+            animation: shimmer 1.5s ease-in-out;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); }
+        }
+
+        .upload-zone.dragover {
+            border-color: #28a745;
+            background: linear-gradient(135deg, rgba(40, 167, 69, 0.1), rgba(34, 197, 94, 0.1));
+            transform: scale(1.02);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            color: #6c5ce7;
+            margin-bottom: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .upload-zone:hover .upload-icon {
+            transform: scale(1.1);
+            color: #a29bfe;
+        }
+
+        .file-input {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .preview-container {
+            margin-top: 25px;
+            text-align: center;
+            position: relative;
+        }
+
+        .preview-image {
+            max-width: 100%;
+            max-height: 400px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            border: 3px solid rgba(108, 92, 231, 0.2);
+        }
+
+        .preview-image:hover {
+            transform: scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.25);
+        }
+
+        .remove-preview {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(220, 53, 69, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .remove-preview:hover {
+            background: rgba(220, 53, 69, 1);
+            transform: scale(1.1);
+        }
+
+        .predict-btn {
+            background: linear-gradient(135deg, #6c5ce7, #a29bfe);
+            border: none;
+            border-radius: 15px;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: white;
+            width: 100%;
+            margin-top: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .predict-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .predict-btn:hover::before {
+            left: 100%;
+        }
+
+        .predict-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(108, 92, 231, 0.3);
+        }
+
+        .predict-btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .result-card {
+            margin-top: 25px;
+            border-radius: 20px;
+            overflow: hidden;
+            animation: slideUp 0.5s ease-out;
+        }
+
+        .result-high {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+        }
+
+        .result-medium {
+            background: linear-gradient(135deg, #fd7e14, #e55a00);
+            color: white;
+        }
+
+        .result-low {
+            background: linear-gradient(135deg, #198754, #157347);
+            color: white;
+        }
+
+        .result-score {
+            font-size: 3rem;
+            font-weight: 700;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .navigation-buttons {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #6c5ce7;
+            border-radius: 15px;
+            padding: 10px 20px;
+            margin-left: 10px;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .nav-btn:hover {
+            background: rgba(108, 92, 231, 0.9);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(108, 92, 231, 0.3);
+        }
+
+        .loading-spinner {
+            display: none;
+            margin: 20px auto;
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(108, 92, 231, 0.2);
+            border-top: 5px solid #6c5ce7;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+
+        .file-info {
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(108, 92, 231, 0.1);
+            border-radius: 10px;
+            font-size: 0.9rem;
+            color: #6c5ce7;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin-top: 20px;
+                padding: 0 15px;
+            }
+
+            .main-title {
+                font-size: 1.8rem;
+            }
+
+            .upload-zone {
+                padding: 30px 15px;
+            }
+
+            .upload-icon {
+                font-size: 3rem;
+            }
+
+            .navigation-buttons {
+                position: relative;
+                top: auto;
+                right: auto;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            .nav-btn {
+                margin: 5px;
+                display: inline-block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Boutons de navigation -->
+    <div class="navigation-buttons">
+        <a href="/login" class="btn nav-btn">
+            <i class="fas fa-sign-in-alt me-2"></i>Se connecter
+        </a>
+    </div>
+
+    <div class="container fade-in">
+        <div class="main-card">
+            <!-- En-tête -->
+            <div class="card-header">
+                <h1 class="main-title">
+                    <i class="fas fa-microscope me-3"></i>SkinSafe
+                </h1>
+                <p class="subtitle">Analyse intelligente de lésions cutanées</p>
+            </div>
+
+            <!-- Corps principal -->
+            <div class="card-body p-4">
+                <form method="post" enctype="multipart/form-data" id="uploadForm">
+                    <!-- Zone de téléchargement -->
+                    <div class="upload-zone" id="uploadZone">
+                        <div class="upload-icon">
+                            <i class="fas fa-cloud-upload-alt"></i>
+                        </div>
+                        <h4>Glissez votre image ici</h4>
+                        <p class="text-muted mb-3">ou cliquez pour sélectionner un fichier</p>
+                        <div class="text-muted small">
+                            <i class="fas fa-info-circle me-1"></i>
+                            Formats acceptés: JPG, PNG, JPEG, DICOM  (max 10MB)
+                        </div>
+                        <input type="file" class="file-input" id="image" name="image" accept="image/*">
+                    </div>
+
+                    <!-- Informations sur le fichier -->
+                    <div class="file-info" id="fileInfo" style="display: none;">
+                        <i class="fas fa-file-image me-2"></i>
+                        <span id="fileName"></span>
+                        <span class="float-end" id="fileSize"></span>
+                    </div>
+
+                    <!-- Aperçu de l'image -->
+                    <div class="preview-container" id="previewContainer" style="display: none;">
+                        <img id="preview" class="preview-image" alt="Aperçu de l'image">
+                        <button type="button" class="remove-preview" id="removePreview">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <!-- Spinner de chargement -->
+                    <div class="loading-spinner" id="loadingSpinner"></div>
+
+                    <!-- Bouton de prédiction -->
+                    <button type="submit" class="predict-btn" id="predictBtn" disabled>
+                        <i class="fas fa-brain me-2"></i>
+                        <span id="btnText">Analyser l'image</span>
+                    </button>
+                </form>
+
+                <!-- Résultats (exemple statique pour la démo) -->
+                <div class="result-card result-low p-4" id="resultCard" style="display: none;">
+                    <div class="row align-items-center">
+                        <div class="col-md-8">
+                            <h5 class="mb-2">
+                                <i class="fas fa-check-circle me-2"></i>
+                                Résultat de l'analyse
+                            </h5>
+                            <p class="mb-0">
+                                <strong>Risque détecté: Faible (23%)</strong>
+                            </p>
+                            <p class="mb-0 mt-2">
+                                <i class="fas fa-lightbulb me-1"></i>
+                                Recommandation: Continuez la surveillance régulière
+                            </p>
+                        </div>
+                        <div class="col-md-4 text-center">
+                            <div class="result-score">23%</div>
+                            <small>Probabilité</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Informations supplémentaires -->
+        <div class="row mt-4">
+            <div class="col-md-4 mb-3">
+                <div class="text-center text-white">
+                    <div class="mb-2">
+                        <i class="fas fa-shield-alt fa-2x"></i>
+                    </div>
+                    <h6>Sécurisé</h6>
+                    <small>Vos données sont protégées</small>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="text-center text-white">
+                    <div class="mb-2">
+                        <i class="fas fa-bolt fa-2x"></i>
+                    </div>
+                    <h6>Rapide</h6>
+                    <small>Résultats en quelques secondes</small>
+                </div>
+            </div>
+            <div class="col-md-4 mb-3">
+                <div class="text-center text-white">
+                    <div class="mb-2">
+                        <i class="fas fa-user-md fa-2x"></i>
+                    </div>
+                    <h6>Professionnel</h6>
+                    <small>Basé sur l'expertise médicale</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Variables globales
+        let selectedFile = null;
+        const maxFileSize = 10 * 1024 * 1024; // 10MB
+        const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png'];
+
+        // Éléments DOM
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('image');
+        const preview = document.getElementById('preview');
+        const previewContainer = document.getElementById('previewContainer');
+        const removePreview = document.getElementById('removePreview');
+        const predictBtn = document.getElementById('predictBtn');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const resultCard = document.getElementById('resultCard');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const uploadForm = document.getElementById('uploadForm');
+        const btnText = document.getElementById('btnText');
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            console.log('Application SkinSafe initialisée');
+        });
+
+        // Configuration des événements
+        function setupEventListeners() {
+            // Événements de glisser-déposer
+            uploadZone.addEventListener('dragover', handleDragOver);
+            uploadZone.addEventListener('dragleave', handleDragLeave);
+            uploadZone.addEventListener('drop', handleDrop);
+
+            // Événement de sélection de fichier
+            fileInput.addEventListener('change', handleFileSelect);
+
+            // Événement de suppression d'aperçu
+            removePreview.addEventListener('click', clearPreview);
+
+            // Événement de soumission du formulaire
+            uploadForm.addEventListener('submit', handleFormSubmit);
+
+            // Prévenir le comportement par défaut du drag & drop
+            ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                document.addEventListener(eventName, preventDefaults, false);
+            });
+        }
+
+        function preventDefaults(e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+
+        // Gestion du glisser-déposer
+        function handleDragOver(e) {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        }
+
+        function handleDragLeave(e) {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFile(files[0]);
+            }
+        }
+
+        // Gestion de la sélection de fichier
+        function handleFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        }
+
+        // Traitement du fichier
+        function handleFile(file) {
+            // Validation du fichier
+            if (!validateFile(file)) {
+                return;
+            }
+
+            selectedFile = file;
+            displayFileInfo(file);
+            showPreview(file);
+            enablePredictButton();
+        }
+
+        // Validation du fichier
+        function validateFile(file) {
+            // Vérifier le type
+            if (!allowedTypes.includes(file.type)) {
+                showAlert('Format de fichier non supporté. Utilisez JPG, PNG ou JPEG.', 'warning');
+                return false;
+            }
+
+            // Vérifier la taille
+            if (file.size > maxFileSize) {
+                showAlert('Le fichier est trop volumineux. Taille maximum: 10MB.', 'warning');
+                return false;
+            }
+
+            return true;
+        }
+
+        // Affichage des informations du fichier
+        function displayFileInfo(file) {
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileInfo.style.display = 'block';
+        }
+
+        // Formatage de la taille du fichier
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Affichage de l'aperçu
+        function showPreview(file) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                preview.src = e.target.result;
+                previewContainer.style.display = 'block';
+                
+                // Animation d'apparition
+                setTimeout(() => {
+                    preview.style.opacity = '1';
+                    preview.style.transform = 'scale(1)';
+                }, 100);
+            };
+
+            reader.onerror = function() {
+                showAlert('Erreur lors de la lecture du fichier.', 'danger');
+            };
+
+            // Préparer l'animation
+            preview.style.opacity = '0';
+            preview.style.transform = 'scale(0.8)';
+            preview.style.transition = 'all 0.3s ease';
+
+            reader.readAsDataURL(file);
+        }
+
+        // Effacement de l'aperçu
+        function clearPreview() {
+            selectedFile = null;
+            fileInput.value = '';
+            previewContainer.style.display = 'none';
+            fileInfo.style.display = 'none';
+            resultCard.style.display = 'none';
+            disablePredictButton();
+        }
+
+        // Activation du bouton de prédiction
+        function enablePredictButton() {
+            predictBtn.disabled = false;
+            predictBtn.classList.remove('btn-secondary');
+            predictBtn.classList.add('predict-btn');
+        }
+
+        // Désactivation du bouton de prédiction
+        function disablePredictButton() {
+            predictBtn.disabled = true;
+            predictBtn.classList.remove('predict-btn');
+            predictBtn.classList.add('btn-secondary');
+        }
+
+        // Gestion de la soumission du formulaire
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            if (!selectedFile) {
+                showAlert('Veuillez sélectionner une image.', 'warning');
+                return;
+            }
+
+            startPrediction();
+        }
+
+        // Démarrage de la prédiction
+        function startPrediction() {
+            // Animation de chargement
+            predictBtn.disabled = true;
+            btnText.textContent = 'Analyse en cours...';
+            loadingSpinner.style.display = 'block';
+            resultCard.style.display = 'none';
+
+            // Simulation d'une prédiction (remplacez par votre API)
+            setTimeout(() => {
+                completePrediction();
+            }, 3000);
+        }
+
+        // Fin de la prédiction
+        function completePrediction() {
+            loadingSpinner.style.display = 'none';
+            btnText.textContent = 'Analyser l\'image';
+            predictBtn.disabled = false;
+
+            // Affichage du résultat (exemple)
+            showResult({
+                risk: 'low',
+                percentage: 23,
+                recommendation: 'Continuez la surveillance régulière'
+            });
+        }
+
+        // Affichage du résultat
+        function showResult(result) {
+            resultCard.className = 'result-card p-4';
+            
+            // Configuration selon le niveau de risque
+            if (result.risk === 'high') {
+                resultCard.classList.add('result-high');
+            } else if (result.risk === 'medium') {
+                resultCard.classList.add('result-medium');
+            } else {
+                resultCard.classList.add('result-low');
+            }
+
+            // Mise à jour du contenu (vous pouvez personnaliser ici)
+            resultCard.style.display = 'block';
+        }
+
+        // Affichage d'alertes
+        function showAlert(message, type = 'info') {
+            // Créer une alerte Bootstrap
+            const alertDiv = document.createElement('div');
+            alertDiv.className = `alert alert-${type} alert-dismissible fade show mt-3`;
+            alertDiv.innerHTML = `
+                <i class="fas fa-info-circle me-2"></i>
+                ${message}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            `;
+
+            // Insérer l'alerte
+            const container = document.querySelector('.container');
+            container.insertBefore(alertDiv, container.firstChild);
+
+            // Supprimer automatiquement après 5 secondes
+            setTimeout(() => {
+                if (alertDiv.parentNode) {
+                    alertDiv.remove();
+                }
+            }, 5000);
+        }
+
+        // Gestion des erreurs globales
+        window.addEventListener('error', function(e) {
+            console.error('Erreur détectée:', e.error);
+            showAlert('Une erreur inattendue s\'est produite.', 'danger');
+        });
+
+        console.log('Script SkinSafe chargé avec succès');
+    </script>
+</body>
+</html>
