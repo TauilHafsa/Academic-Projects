@@ -45,28 +45,27 @@ To automate melanoma detection using a Deep Learning model trained on annotated 
 ---
 
 ## 📁 Project Structure
-
 /SkinSafe/
 |
 ├── app.ipynb               # Fichier principal Flask
-├── skinsafevit.ipynb       # Modele entraine
-├── static/                 # Dossier pour les images uploadees
+├── skinsafevit.ipynb       # Modèle entraîné
+├── static/                 # Dossier pour les images uploadées
 │   └── ...
-├── templates/              
-│   ├── index.html          # Page d acceuil
-│   ├── dashboard.html      # Page de tableau de board
-│   ├── history.html        # Page d historique
-│   ├── login.html 
-│   ├── register.html 
-│   └── error.html          
-├── patterns/               # Implementation des design patterns
-│   ├── __init__.py         
-│   ├── singleton.py        
-│   ├── observer.py         
-│   ├── adapter.py          
-│   ├── strategy.py        
-│   ├── command.py         
-│   └── facade.py         
+├── templates/
+│   ├── index.html          # Page d'accueil
+│   ├── dashboard.html      # Page de tableau de bord
+│   ├── history.html        # Page d'historique
+│   ├── login.html
+│   ├── register.html
+│   └── error.html
+├── patterns/               # Implémentation des design patterns
+│   ├── __init__.py
+│   ├── singleton.py
+│   ├── observer.py
+│   ├── adapter.py
+│   ├── strategy.py
+│   ├── command.py
+│   └── facade.py
 ├── utils/                  # Utilitaires supplémentaires
 │   └── config.py           # Configuration
 ├── models.py
@@ -132,6 +131,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 
 ---
+
 
 
 
