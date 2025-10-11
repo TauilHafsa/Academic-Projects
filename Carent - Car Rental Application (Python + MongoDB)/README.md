@@ -74,7 +74,7 @@ To create a comprehensive application for managing a car rental agency, includin
 ---
 
 ## 📁 Project Structure
-
+```
 carent/
 ├── app/
 │ ├── init.py
@@ -124,7 +124,7 @@ carent/
 │ └── decorators.py
 ├── requirements.txt
 └── run.py
-
+```
 ---
 
 ## 🚀 Getting Started
@@ -185,5 +185,6 @@ carent/
 ## 📃 License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for more details.
+
 
 ---
