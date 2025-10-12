@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification Test</title>
+    <meta name="csrf-token" content="test-token">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="notification-debug.js"></script>
+</head>
+<body class="bg-gray-100 p-10">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6">Notification Dropdown Test</h1>
+
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4">Test the notification dropdown</h2>
+
+            <!-- Notification Button -->
+            <div class="relative">
+                <button id="notification-button" type="button" class="relative flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 p-1 border border-gray-300">
+                    <span class="sr-only">View notifications</span>
+                    <svg class="h-6 w-6 text-gray-400 hover:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                    <span id="notification-counter" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                        3
+                    </span>
+                </button>
+
+                <!-- Notification Dropdown Menu -->
+                <div id="notification-dropdown" class="hidden origin-top-right absolute right-0 mt-2 w-80 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                    <div class="py-1 bg-gray-50 border-b">
+                        <div class="flex justify-between items-center px-4 py-2">
+                            <h3 class="text-sm font-medium text-gray-700">Notifications</h3>
+                            <div class="flex space-x-2">
+                                <button id="mark-all-read" type="button" class="text-xs text-blue-600 hover:text-blue-800">
+                                    Mark all as read
+                                </button>
+                                <a href="#" class="text-xs text-gray-600 hover:text-gray-800">
+                                    View all
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="max-h-60 overflow-y-auto" id="notification-list">
+                        <div class="py-4 text-center text-gray-500 text-sm">
+                            Test notifications will appear here
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <h3 class="font-medium mb-2">Debug Info:</h3>
+                <div id="debug-output" class="bg-gray-100 p-4 rounded-md text-sm">
+                    Open browser console to see debug information.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add some manual test functions
+        function toggleDropdownManually() {
+            const dropdown = document.getElementById('notification-dropdown');
+            if (dropdown) {
+                dropdown.classList.toggle('hidden');
+                dropdown.classList.toggle('block');
+                console.log('Manual toggle triggered');
+            }
+        }
+
+        // Output debug info
+        const debugOutput = document.getElementById('debug-output');
+        if (debugOutput) {
+            setTimeout(() => {
+                const button = document.getElementById('notification-button');
+                const dropdown = document.getElementById('notification-dropdown');
+
+                debugOutput.innerHTML = `
+                    <p>Button exists: ${button !== null}</p>
+                    <p>Dropdown exists: ${dropdown !== null}</p>
+                    <p>Button has click handler: ${button?.onclick !== null || 'Unknown'}</p>
+                    <p>Current dropdown visibility: ${dropdown?.classList.contains('hidden') ? 'Hidden' : 'Visible'}</p>
+                    <button onclick="toggleDropdownManually()" class="mt-2 px-3 py-1 bg-blue-500 text-white rounded">
+                        Toggle Dropdown Manually
+                    </button>
+                `;
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

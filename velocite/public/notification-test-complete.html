@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notification Dropdown Test</title>
+    <meta name="csrf-token" content="test-token">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .fade-in {
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 p-10">
+    <div class="max-w-7xl mx-auto">
+        <h1 class="text-2xl font-bold mb-6">Notification Dropdown Test</h1>
+
+        <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+            <h2 class="text-xl font-semibold mb-4">Test the notification dropdown</h2>
+
+            <!-- Notification Button -->
+            <div class="relative inline-block">
+                <button id="notification-button" type="button" class="relative flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 p-1 border border-gray-300">
+                    <span class="sr-only">View notifications</span>
+                    <svg class="h-6 w-6 text-gray-400 hover:text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
+                    </svg>
+                    <span id="notification-counter" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                        3
+                    </span>
+                </button>
+
+                <!-- Notification Dropdown Menu -->
+                <div id="notification-dropdown" class="hidden origin-top-right absolute right-0 mt-2 w-80 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none z-10">
+                    <div class="py-1 bg-gray-50 border-b">
+                        <div class="flex justify-between items-center px-4 py-2">
+                            <h3 class="text-sm font-medium text-gray-700">Notifications</h3>
+                            <div class="flex space-x-2">
+                                <button id="mark-all-read" type="button" class="text-xs text-blue-600 hover:text-blue-800">
+                                    Mark all as read
+                                </button>
+                                <a href="#" class="text-xs text-gray-600 hover:text-gray-800">
+                                    View all
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="max-h-60 overflow-y-auto" id="notification-list">
+                        <div class="py-4 text-center text-gray-500 text-sm">
+                            Test notifications will appear here
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <h3 class="font-medium mb-2">Test Controls:</h3>
+                <div class="flex space-x-2">
+                    <button id="test-toggle-dropdown" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-700">
+                        Toggle Dropdown
+                    </button>
+                    <button id="test-add-notification" class="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-700">
+                        Add Test Notification
+                    </button>
+                    <button id="test-clear-notifications" class="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-700">
+                        Clear Notifications
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-4">Debug Info</h2>
+            <div id="debug-output" class="bg-gray-100 p-4 rounded-md text-sm">
+                <p>Checking notification elements...</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Simple NotificationManager implementation for testing
+        class TestNotificationManager {
+            constructor() {
+                console.log('Initializing Test Notification Manager');
+
+                // Get elements
+                this.notificationButton = document.getElementById('notification-button');
+                this.notificationDropdown = document.getElementById('notification-dropdown');
+                this.notificationCounter = document.getElementById('notification-counter');
+                this.notificationList = document.getElementById('notification-list');
+                this.markAllReadButton = document.getElementById('mark-all-read');
+
+                // Debug elements
+                this.debugOutput = document.getElementById('debug-output');
+
+                // Log elements
+                this.logElementStatus();
+
+                // Setup event listeners
+                this.setupEventListeners();
+
+                // Test controls
+                this.setupTestControls();
+
+                // Initialize notifications
+                this.notifications = [
+                    { id: 1, content: 'Your bike rental has been confirmed', created_at: new Date(Date.now() - 30 * 60000), is_read: false },
+                    { id: 2, content: 'Payment received for order #12345', created_at: new Date(Date.now() - 2 * 3600000), is_read: true },
+                    { id: 3, content: 'Your rental period ends tomorrow', created_at: new Date(Date.now() - 24 * 3600000), is_read: false }
+                ];
+
+                // Render initial notifications
+                this.renderNotifications();
+            }
+
+            logElementStatus() {
+                const status = {
+                    notificationButton: !!this.notificationButton,
+                    notificationDropdown: !!this.notificationDropdown,
+                    notificationCounter: !!this.notificationCounter,
+                    notificationList: !!this.notificationList,
+                    markAllReadButton: !!this.markAllReadButton
+                };
+
+                console.log('Notification elements status:', status);
+
+                if (this.debugOutput) {
+                    this.debugOutput.innerHTML = `
+                        <h3 class="font-medium mb-2">Element Status:</h3>
+                        <ul class="list-disc pl-5 mb-4">
+                            <li>Notification Button: <span class="${status.notificationButton ? 'text-green-600' : 'text-red-600'}">${status.notificationButton ? 'Found' : 'Not Found'}</span></li>
+                            <li>Notification Dropdown: <span class="${status.notificationDropdown ? 'text-green-600' : 'text-red-600'}">${status.notificationDropdown ? 'Found' : 'Not Found'}</span></li>
+                            <li>Notification Counter: <span class="${status.notificationCounter ? 'text-green-600' : 'text-red-600'}">${status.notificationCounter ? 'Found' : 'Not Found'}</span></li>
+                            <li>Notification List: <span class="${status.notificationList ? 'text-green-600' : 'text-red-600'}">${status.notificationList ? 'Found' : 'Not Found'}</span></li>
+                            <li>Mark All Read Button: <span class="${status.markAllReadButton ? 'text-green-600' : 'text-red-600'}">${status.markAllReadButton ? 'Found' : 'Not Found'}</span></li>
+                        </ul>
+                        <h3 class="font-medium mb-2">Event Log:</h3>
+                        <div id="event-log" class="bg-gray-200 p-2 rounded-md text-xs font-mono h-40 overflow-y-auto"></div>
+                    `;
+                }
+            }
+
+            log(message) {
+                console.log(message);
+                const eventLog = document.getElementById('event-log');
+                if (eventLog) {
+                    const entry = document.createElement('div');
+                    entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+                    entry.className = 'mb-1';
+                    eventLog.insertBefore(entry, eventLog.firstChild);
+                }
+            }
+
+            setupEventListeners() {
+                if (this.notificationButton) {
+                    this.notificationButton.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        this.log('Notification button clicked');
+                        this.toggleDropdown();
+                    });
+                }
+
+                document.addEventListener('click', (event) => {
+                    if (this.isDropdownOpen() &&
+                        !this.notificationDropdown.contains(event.target) &&
+                        !this.notificationButton.contains(event.target)) {
+                        this.log('Clicked outside dropdown, hiding it');
+                        this.hideDropdown();
+                    }
+                });
+
+                if (this.markAllReadButton) {
+                    this.markAllReadButton.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.log('Mark all as read clicked');
+                        this.markAllAsRead();
+                    });
+                }
+            }
+
+            setupTestControls() {
+                const toggleButton = document.getElementById('test-toggle-dropdown');
+                if (toggleButton) {
+                    toggleButton.addEventListener('click', () => {
+                        this.log('Test toggle button clicked');
+                        this.toggleDropdown();
+                    });
+                }
+
+                const addButton = document.getElementById('test-add-notification');
+                if (addButton) {
+                    addButton.addEventListener('click', () => {
+                        this.log('Adding test notification');
+                        this.addTestNotification();
+                    });
+                }
+
+                const clearButton = document.getElementById('test-clear-notifications');
+                if (clearButton) {
+                    clearButton.addEventListener('click', () => {
+                        this.log('Clearing all notifications');
+                        this.notifications = [];
+                        this.renderNotifications();
+                        this.updateNotificationCounter(0);
+                    });
+                }
+            }
+
+            isDropdownOpen() {
+                return this.notificationDropdown && this.notificationDropdown.classList.contains('block');
+            }
+
+            showDropdown() {
+                if (this.notificationDropdown) {
+                    this.notificationDropdown.classList.remove('hidden');
+                    this.notificationDropdown.classList.add('block', 'fade-in');
+                    this.log('Dropdown shown');
+                }
+            }
+
+            hideDropdown() {
+                if (this.notificationDropdown) {
+                    this.notificationDropdown.classList.add('hidden');
+                    this.notificationDropdown.classList.remove('block');
+                    this.log('Dropdown hidden');
+                }
+            }
+
+            toggleDropdown() {
+                this.log('Toggle dropdown called');
+                if (this.isDropdownOpen()) {
+                    this.hideDropdown();
+                } else {
+                    this.showDropdown();
+                }
+            }
+
+            updateNotificationCounter(count) {
+                if (this.notificationCounter) {
+                    if (count > 0) {
+                        this.notificationCounter.textContent = count > 99 ? '99+' : count;
+                        this.notificationCounter.classList.remove('hidden');
+                    } else {
+                        this.notificationCounter.classList.add('hidden');
+                    }
+                    this.log(`Updated notification counter: ${count}`);
+                }
+            }
+
+            renderNotifications() {
+                if (!this.notificationList) return;
+
+                if (this.notifications.length === 0) {
+                    this.notificationList.innerHTML = `
+                        <div class="py-4 text-center text-gray-500 text-sm">
+                            No notifications
+                        </div>
+                    `;
+                    return;
+                }
+
+                this.notificationList.innerHTML = '';
+                this.notifications.forEach(notification => {
+                    const item = document.createElement('a');
+                    item.href = "#";
+                    item.classList.add('block', 'px-4', 'py-2', 'hover:bg-gray-100', 'transition', 'duration-150', 'ease-in-out');
+                    if (!notification.is_read) {
+                        item.classList.add('bg-blue-50');
+                    }
+
+                    // Format date
+                    const dateStr = this.formatDate(notification.created_at);
+
+                    // Create notification content
+                    item.innerHTML = `
+                        <div class="flex items-start">
+                            <div class="flex-1">
+                                <p class="text-sm font-medium text-gray-900">${notification.content}</p>
+                                <p class="text-xs text-gray-500 mt-1">${dateStr}</p>
+                            </div>
+                            <div class="ml-2">
+                                <button type="button" class="mark-read-btn text-sm text-blue-600 hover:text-blue-800" data-id="${notification.id}">
+                                    ${notification.is_read ? 'Read' : 'Mark read'}
+                                </button>
+                            </div>
+                        </div>
+                    `;
+
+                    this.notificationList.appendChild(item);
+
+                    // Add event listener to mark as read button
+                    const markReadBtn = item.querySelector('.mark-read-btn');
+                    markReadBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        this.markAsRead(notification.id);
+                    });
+                });
+
+                // Update counter
+                const unreadCount = this.notifications.filter(n => !n.is_read).length;
+                this.updateNotificationCounter(unreadCount);
+            }
+
+            markAsRead(id) {
+                this.log(`Marking notification ${id} as read`);
+                const index = this.notifications.findIndex(n => n.id === id);
+                if (index !== -1) {
+                    this.notifications[index].is_read = true;
+                    this.renderNotifications();
+                }
+            }
+
+            markAllAsRead() {
+                this.log('Marking all notifications as read');
+                this.notifications.forEach(n => n.is_read = true);
+                this.renderNotifications();
+            }
+
+            addTestNotification() {
+                const newId = this.notifications.length > 0
+                    ? Math.max(...this.notifications.map(n => n.id)) + 1
+                    : 1;
+
+                const testMessages = [
+                    'Your bike is ready for pickup',
+                    'New comment on your rental',
+                    'Your rental period has been extended',
+                    'Payment confirmation #' + Math.floor(Math.random() * 10000),
+                    'Your rental has received a new rating'
+                ];
+
+                const randomMessage = testMessages[Math.floor(Math.random() * testMessages.length)];
+
+                const newNotification = {
+                    id: newId,
+                    content: randomMessage,
+                    created_at: new Date(),
+                    is_read: false
+                };
+
+                this.notifications.unshift(newNotification);
+                this.renderNotifications();
+            }
+
+            formatDate(dateString) {
+                const date = new Date(dateString);
+                const now = new Date();
+                const diffInSeconds = Math.floor((now - date) / 1000);
+
+                if (diffInSeconds < 60) {
+                    return 'Just now';
+                } else if (diffInSeconds < 3600) {
+                    const minutes = Math.floor(diffInSeconds / 60);
+                    return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+                } else if (diffInSeconds < 86400) {
+                    const hours = Math.floor(diffInSeconds / 3600);
+                    return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+                } else if (diffInSeconds < 604800) {
+                    const days = Math.floor(diffInSeconds / 86400);
+                    return `${days} day${days > 1 ? 's' : ''} ago`;
+                } else {
+                    return date.toLocaleDateString();
+                }
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM loaded - initializing test notification manager');
+            window.testNotificationManager = new TestNotificationManager();
+        });
+    </script>
+</body>
+</html>
