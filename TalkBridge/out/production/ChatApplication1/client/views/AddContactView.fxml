@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<VBox xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="client.controllers.AddContactController"
+      spacing="10" alignment="CENTER" style="-fx-padding: 20;">
+
+    <Label text="Ajouter un contact" style="-fx-font-size: 20; -fx-font-weight: bold;"/>
+
+    <TextField fx:id="emailField" promptText="Email du contact"
+               style="-fx-pref-width: 250;"/>
+
+    <Label fx:id="statusLabel" style="-fx-text-fill: red;"/>
+
+    <HBox spacing="10" alignment="CENTER">
+        <Button text="Ajouter" onAction="#handleAddContact"
+                style="-fx-background-color: #25D366; -fx-text-fill: white;"/>
+        <Button text="Annuler" onAction="#handleCancel"
+                style="-fx-background-color: #128C7E; -fx-text-fill: white;"/>
+    </HBox>
+
+</VBox>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/11.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="client.controllers.ChatController">
+    <TextArea fx:id="chatArea" editable="false" VBox.vgrow="ALWAYS"/>
+    <HBox>
+        <TextField fx:id="messageField" HBox.hgrow="ALWAYS"/>
+        <Button fx:id="sendButton" text="Send"/>
+        <Button fx:id="attachButton" text="Attach"/>
+
+    </HBox>
+</VBox>

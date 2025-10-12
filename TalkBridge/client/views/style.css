@@ -1,0 +1,67 @@
+.root {
+    -fx-font-family: "Arial";
+    -fx-base: #3498db;
+}
+
+.title {
+    -fx-font-size: 24px;
+    -fx-font-weight: bold;
+}
+
+.button {
+    -fx-pref-width: 200px;
+    -fx-pref-height: 30px;
+}
+
+.link-button {
+    -fx-background-color: transparent;
+    -fx-text-fill: #3498db;
+    -fx-underline: true;
+    -fx-padding: 0;
+}
+
+.link-button:hover {
+    -fx-text-fill: #2980b9;
+}
+
+.error {
+    -fx-text-fill: #e74c3c;
+    -fx-font-weight: bold;
+}
+
+.text-field, .password-field {
+    -fx-pref-width: 250px;
+}
+.chat-area {
+    -fx-padding: 10px;
+}
+
+.message-box {
+    -fx-max-width: 70%;
+    -fx-padding: 8px 12px;
+    -fx-background-radius: 10px;
+    -fx-font-size: 14px;
+    -fx-wrap-text: true;
+}
+
+.sent-message {
+    -fx-background-color: #dcf8c6; /* WhatsApp sent message color */
+    -fx-alignment: center-right;
+    -fx-margin-right: 5px;
+}
+
+.received-message {
+    -fx-background-color: #ffffff; /* WhatsApp received message color */
+    -fx-alignment: center-left;
+    -fx-margin-left: 5px;
+}
+
+.file-link {
+    -fx-text-fill: #007bff;
+    -fx-underline: true;
+    -fx-cursor: hand;
+}
+
+.file-link:hover {
+    -fx-text-fill: #0056b3;
+}

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="15.0" alignment="CENTER" xmlns="http://javafx.com/javafx/11.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.controllers.RemoveContactController">
+    <padding>
+        <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
+    </padding>
+
+    <Label text="Supprimer un contact" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+
+    <Label text="Entrez l'email du contact à supprimer :" wrapText="true" />
+    <TextField fx:id="contactEmailField" promptText="Email du contact" maxWidth="300.0" />
+
+    <!-- Removed managed and visible bindings -->
+    <Label fx:id="statusLabel" style="-fx-font-weight: bold;" />
+
+    <HBox spacing="10.0" alignment="CENTER">
+        <Button fx:id="confirmRemoveButton" text="Supprimer" onAction="#handleConfirmRemove" style="-fx-background-color: #D32F2F; -fx-text-fill: white;" defaultButton="true" />
+        <Button fx:id="cancelButton" text="Annuler" onAction="#handleCancel" cancelButton="true" />
+    </HBox>
+
+</VBox>

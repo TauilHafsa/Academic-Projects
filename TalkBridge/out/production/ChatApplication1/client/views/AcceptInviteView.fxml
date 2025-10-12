@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="10" xmlns="http://javafx.com/javafx/23"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="client.controllers.AcceptInviteController">
+
+    <Label text="Nom de l'expéditeur :" />
+    <TextField fx:id="senderField" />
+    <Button text="Accepter" onAction="#handleAccept" />
+</VBox>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx/11.0.1"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="client.controllers.GroupsController"
+      spacing="10"
+      style="-fx-padding: 20;">
+
+    <Label fx:id="titleLabel" style="-fx-font-size: 18px; -fx-font-weight: bold;"/>
+    <Separator/>
+    <HBox spacing="10">
+        <ListView fx:id="groupsListView" style="-fx-pref-height: 300px; -fx-pref-width: 200px;"/>
+        <VBox spacing="10">
+            <ListView fx:id="groupMembersListView" style="-fx-pref-height: 150px; -fx-pref-width: 400px;"/>
+            <TextArea fx:id="chatArea" style="-fx-pref-height: 150px; -fx-pref-width: 400px;" editable="false"/>
+        </VBox>
+    </HBox>
+    <HBox spacing="10">
+        <TextField fx:id="messageField" HBox.hgrow="ALWAYS"/>
+        <Button fx:id="sendButton" text="Send"/>
+    </HBox>
+</VBox>
