@@ -160,15 +160,6 @@ Example:
 - **Team:** TAUIL Hafsa / EL FAHSI Chaymae / EL BEKKARI Houda 
 - **Encryption Integration:** Serpent / Diffie–Hellman
 
----
-
-## 🏁 Future Improvements
-- Add message persistence in database.
-- Integrate voice/video calls.
-- Add user presence (online/offline).
-- Implement message delivery receipts.
-
----
 
 ## 📜 License
 This project is provided for **educational and research purposes** under an open-source license (MIT or GPLv3, as you prefer).
